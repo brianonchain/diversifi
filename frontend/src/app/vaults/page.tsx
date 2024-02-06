@@ -40,7 +40,7 @@ const page = () => {
               className={`${selectedChain === i ? "bg-gray-200" : ""} flex flex-col items-center hover:bg-gray-200 px-5 py-3 rounded-lg drop-shadow-md cursor-pointer`}
             >
               <div className="relative w-[50px] h-[50px]">
-                <Image src={`/${i}.svg`} alt={i} fill />
+                <Image src={`/${i.toLowerCase()}.svg`} alt={i} fill />
               </div>
               <div className="text-xs">{i}</div>
             </div>
