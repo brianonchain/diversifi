@@ -31,31 +31,26 @@ const Navbar = () => {
     {
       id: "dashboard",
       title: "Dashboard",
+      route: "/",
     },
     {
       id: "vaults",
       title: "Vaults",
+      route: "/vaults",
     },
   ];
 
   return (
     <div className="h-[52px] border-b border-gray-300 px-4 w-full flex items-center justify-between">
       {/*---logo---*/}
-      <div className="w-[160px] h-full flex items-center">
-        <div className="w-[120px] h-full relative">
-          <Image src="/logo.svg" alt="navLogo" fill />
-        </div>
+      <div className="w-[120px] h-full relative">
+        <Image src="/logo.svg" alt="navLogo" fill />
       </div>
       {/*---menu links---*/}
       <div className="hidden md:flex space-x-4 lg:space-x-12">
-        {navLinks.map((navLink, index) => (
-          <div
-            className="text-slate-800 text-lg font-semibold text-center cursor-pointer hover:text-blue-500"
-            id={navLink.id}
-            onClick={() => router.push(`${navLink.id}`)}
-            key={index}
-          >
-            {navLink.title}
+        {navLinks.map((i, index) => (
+          <div className="text-slate-800 text-lg font-semibold text-center cursor-pointer hover:text-blue-500" onClick={() => router.push(`${i.route}`)} key={index}>
+            {i.title}
           </div>
         ))}
       </div>

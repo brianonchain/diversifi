@@ -1,20 +1,20 @@
 "use client";
 import { createWeb3Modal, defaultWagmiConfig } from "@web3modal/wagmi/react";
 import { WagmiConfig } from "wagmi";
-import { arbitrum, mainnet } from "viem/chains";
+import { arbitrum, polygon, optimism, base } from "viem/chains";
 
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "";
 console.log(projectId);
 
 // 2. Create wagmiConfig
 const metadata = {
-  name: "Antica Finance",
+  name: "Diversifi Finance",
   description: "",
   url: "https://web3modal.com",
   icons: ["https://avatars.githubusercontent.com/u/37784886"],
 };
 
-const chains = [mainnet, arbitrum];
+const chains = [arbitrum, polygon, optimism, base];
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
 
 // 3. Create modal

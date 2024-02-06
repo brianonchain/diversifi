@@ -26,6 +26,18 @@ body {
     rgb(var(--background-start-rgb));
 } */
 
+@layer base {
+  .link {
+    @apply text-blue-500 hover:underline;
+  }
+}
+
+@layer components {
+  .classname {
+    @apply bg-red-300;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
