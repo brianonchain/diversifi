@@ -2,6 +2,7 @@
 import { createWeb3Modal, defaultWagmiConfig } from "@web3modal/wagmi/react";
 import { WagmiConfig } from "wagmi";
 import { arbitrum, polygon, optimism, base } from "viem/chains";
+import logo from "../../public/logo.svg";
 
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "";
 console.log(projectId);
@@ -32,6 +33,7 @@ createWeb3Modal({
     // "--w3m-border-radius-master": "20",
   },
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
+  chainImages: { 534352: "/logo.svg" },
 });
 
 export function Web3Modal({ children }: { children: React.ReactNode }) {

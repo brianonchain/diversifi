@@ -41,14 +41,13 @@ const page = () => {
           </p>
           <p>
             Because of these risks, a diversified portfolio is essential. In DeFi, there are many highly rated protocols that allow you to earn 10%+ (some at 30%+). If you are
-            farming 10 protocols at an average of 15% APR and, within the year, 1 protocol is unexpectedly attacked, then your final APR is 10%, which still beats the performance
-            of the S&P index.
+            earning yield on 10 protocols at an average of 15% APR and, within the year, 1 protocol is unexpectedly attacked, then your final APR is 10%, which still beats the
+            performance of the S&P index. Diversification protects your portfolio from these low-probability, catastrophic events.
           </p>
           <p>
-            Therefore, diversification allows you to mitigate risk from low-probability, catastrophic events. By being diversified, you should have peace of mind when earning yield
-            in DeFi. Finally, diversification is meaningless without transparency, as Celsius and others have also claimed to have a diversified portfolio.
+            Finally, diversification is meaningless without transparency, as Celsius and others have also claimed to have a diversified portfolio. By offering both transparency and
+            diversification, Diversifi aims to provide a better alternative for DeFi users wishing to earn yield on their stablecoins.
           </p>
-          <p>By offering both transparency and diversification, we hope to bring to you the full benefits of decentralized finance.</p>
         </div>
         <div className="mt-6 text-3xl font-bold">The Team</div>
       </div>
