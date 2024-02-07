@@ -41,12 +41,12 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="h-[52px] border-b border-gray-300 px-4 w-full flex items-center justify-between">
+    <div className="h-[64px] xs:h-[52px] border-b border-gray-300 p-2 xs:px-4 w-full flex items-center justify-between">
       {/*---logo---*/}
-      <div className="w-[120px] h-full relative">
+      <div className="w-[76px] xs:w-[120px] h-full relative">
         <Image src="/logo.svg" alt="navLogo" fill />
       </div>
-      {/*---menu links---*/}
+      {/*---DESKTOP menu links---*/}
       <div className="hidden md:flex space-x-4 lg:space-x-12">
         {navLinks.map((i, index) => (
           <div className="text-slate-800 text-lg font-semibold text-center cursor-pointer hover:text-blue-500" onClick={() => router.push(`${i.route}`)} key={index}>
@@ -54,15 +54,17 @@ const Navbar = () => {
           </div>
         ))}
       </div>
-      {/*---login + signup button---*/}
-      <div className="flex space-x-2">
-        <w3m-network-button />
+      {/*---connect button---*/}
+      <div className="flex mr-2 xs:mr-0 xs:space-x-2">
+        <div className="hidden xs:block">
+          <w3m-network-button />
+        </div>
         <w3m-button balance="hide" />
       </div>
       {/*---MOBILE ONLY---*/}
-      <div className="flex items-center justify-end md:hidden mr-6">
+      <div className="flex items-center justify-end md:hidden mr-2">
         {/*---need to wrap icon and menu into 1 div, for useRef---*/}
-        <div ref={ref} className="">
+        <div ref={ref}>
           {/*---animated menu open/close icon ---*/}
           <div onClick={() => setIsMenuOpen(!isMenuOpen)} className="relative h-[36px] w-[36px]">
             <div className={`${isMenuOpen ? "rotate-45 top-[16px] scale-110" : "top-[4px]"} absolute bg-black h-[3px] w-[36px] rounded transition-all duration-500`}></div>
@@ -70,17 +72,23 @@ const Navbar = () => {
             <div className={`${isMenuOpen ? "-rotate-45 top-[16px] scale-110" : "top-[28px]"} absolute bg-black h-[3px] w-[36px] rounded transition-all duration-500`}></div>
           </div>
           {/*---menu contents---*/}
-          <div className={`${isMenuOpen ? "right-[-2px]" : " right-[-250px]"} pl-6 py-10 absolute top-[72px] w-[240px] duration-500`}>
-            <div className="w-full h-full absolute bg-white opacity-95 backdrop-blur-md top-0 left-0 rounded-tl-2xl rounded-bl-2xl border"></div>
-            <div className="flex flex-col z-50 relative space-y-10">
-              {navLinks.map((navLink, index) => (
+          <div
+            className={`${
+              isMenuOpen ? "right-[-2px]" : " right-[-220px]"
+            } pl-9 py-10 absolute top-[70px] w-[200px] rounded-tl-2xl rounded-bl-2xl border-2 border-gray-200 bg-white duration-500 z-50`}
+          >
+            <div className="flex flex-col relative space-y-10">
+              {navLinks.map((i, index) => (
                 <div
+                  id={i.id}
                   key={index}
-                  id={navLink.id}
-                  // onClick={handleOnNavClick}
-                  className="font-medium text-slate-700 cursor-pointer text-2xl"
+                  onClick={() => {
+                    router.push(`${i.route}`);
+                    setIsMenuOpen(false);
+                  }}
+                  className="font-medium text-slate-700 text-2xl active:text-blue-500"
                 >
-                  {navLink.title}
+                  {i.title}
                 </div>
               ))}
             </div>

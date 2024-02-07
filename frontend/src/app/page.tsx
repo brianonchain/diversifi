@@ -32,9 +32,9 @@ export default function Home() {
   };
 
   return (
-    <main className="flex h-[calc(100vh-88px)] bg-gray-100 p-4 text-gray-700">
+    <main className="flex flex-col lg:flex-row lg:h-[calc(100vh-88px)] bg-gray-100 p-4 text-gray-700">
       {/*---LEFT CARD---*/}
-      <div className="w-[30%] h-full px-4 mr-4 bg-white rounded-xl drop-shadow-sm border border-gray-200 ">
+      <div className="lg:w-[30%] h-full px-4 lg:mr-4 bg-white rounded-xl drop-shadow-sm border border-gray-200 ">
         {/*---CURRENT VIEW---*/}
         <div className="mt-5">
           {/*---title---*/}
@@ -60,7 +60,7 @@ export default function Home() {
           </div>
         </div>
         {/*---VAULTS---*/}
-        <div className="mt-10 border rounded-xl overflow-hidden">
+        <div className="mt-10 mb-10 lg:mb-0 border rounded-xl overflow-hidden">
           {allVaults && selectedVault ? (
             allVaults.map((i, index) => (
               <div
@@ -79,9 +79,9 @@ export default function Home() {
         </div>
       </div>
       {/*---right menu---*/}
-      <div className="w-[70%] h-full flex flex-col">
-        <div className="w-full h-[50%] bg-white p-4 rounded-xl drop-shadow-sm border border-gray-200 text-sm">performance chart</div>
-        <div className="p-4 text-sm">vault details</div>
+      <div className="lg:w-[70%] mt-4 lg:mt-0 h-full flex flex-col">
+        <div className="w-full h-[250px] lg:h-[50%] bg-white p-4 rounded-xl drop-shadow-sm border border-gray-200 text-sm">performance chart</div>
+        <div className="p-4 h-[250px] lg:h-auto text-sm">vault details</div>
       </div>
     </main>
   );

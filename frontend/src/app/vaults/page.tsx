@@ -25,11 +25,11 @@ const page = () => {
   const chains = ["Arbitrum", "Polygon", "Optimism", "Base"];
 
   return (
-    <main className="flex w-full h-[calc(100vh-88px)] bg-gray-100 space-x-4 p-4 text-gray-700">
+    <main className="flex flex-col lg:flex-row w-full lg:h-[calc(100vh-88px)] bg-gray-100 space-y-3 lg:space-y-0 lg:space-x-4 p-4 text-gray-700">
       {/*---SELECT CHAIN---*/}
-      <div className="w-[13%] h-full flex flex-col items-center p-4 bg-white rounded-xl drop-shadow-sm border border-gray-200 ">
+      <div className="lg:w-[13%] h-full flex flex-col items-center p-4 bg-white rounded-xl drop-shadow-sm border border-gray-200 ">
         <div className="font-bold">Select chain</div>
-        <div className="mt-4 space-y-2">
+        <div className="flex lg:block mt-2 xs:mt-4 space-x-1 lg:space-x-0 lg:space-y-2">
           {chains.map((i) => (
             <div
               id={i}
@@ -37,9 +37,11 @@ const page = () => {
                 setSelectedChain(e.currentTarget.id);
                 setSelectedVault(allVaults[e.currentTarget.id][0]);
               }}
-              className={`${selectedChain === i ? "bg-gray-200" : ""} flex flex-col items-center hover:bg-gray-200 px-5 py-3 rounded-lg drop-shadow-md cursor-pointer`}
+              className={`${
+                selectedChain === i ? "bg-gray-200" : ""
+              } flex flex-col items-center hover:bg-gray-200 px-2 xs:px-5 py-1 xs:py-3 rounded-lg drop-shadow-md cursor-pointer`}
             >
-              <div className="relative w-[50px] h-[50px]">
+              <div className="relative flex-none w-[50px] h-[40px] xs:w-[50px] xs:h-[50px]">
                 <Image src={`/${i.toLowerCase()}.svg`} alt={i} fill />
               </div>
               <div className="text-xs">{i}</div>
@@ -48,7 +50,7 @@ const page = () => {
         </div>
       </div>
       {/*---SELECT VAULT---*/}
-      <div className="w-[20%] h-full flex flex-col items-center p-4 bg-white rounded-xl drop-shadow-sm border border-gray-200 ">
+      <div className="lg:w-[20%] h-full flex flex-col items-center p-4 bg-white rounded-xl drop-shadow-sm border border-gray-200 ">
         <div className="font-bold">Select Vault</div>
         <div className="mt-4 space-y-4">
           {allVaults[selectedChain].map((i) => (
@@ -69,10 +71,10 @@ const page = () => {
       </div>
 
       {/*---VAULT DETAILS & DEPOSIT---*/}
-      <div className="w-[65%] h-full flex flex-col items-center p-4 bg-white rounded-xl drop-shadow-sm border border-gray-200">
+      <div className="lg:w-[65%] h-full flex flex-col items-center p-4 bg-white rounded-xl drop-shadow-sm border border-gray-200">
         <div className="h-[50px] font-bold">{selectedVault.title} Details</div>
         {/*---description---*/}
-        <div className="h-[calc(100%-200px)]">description</div>
+        <div className="h-[150px] lg:h-[calc(100%-200px)]">description</div>
         {/*---deposit---*/}
         <div className="h-[150px]">
           <button className="px-3 py-2 rounded-lg text-white font-bold bg-blue-500 hover:bg-blue-400 cursor-pointer">Deposit</button>

@@ -2,12 +2,12 @@ import Link from "next/link";
 
 const page = () => {
   return (
-    <div className="flex flex-col items-center py-12 bg-gray-100">
-      <div className="w-[700px]">
-        <div className="flex-col items-center text-[45px] leading-tight font-bold text-center">Transparent, hyperdiversified, stablecoin yields</div>
+    <div className="flex flex-col items-center px-2 lg:px-0 py-6 xs:py-12 bg-gray-100">
+      <div className="lg:w-[700px]">
+        <div className="flex-col items-center text-4xl xs:text-[45px] leading-tight font-bold text-center">Transparent, hyper-diversified, stablecoin yields</div>
         <div className="mt-4 text-xl">Earn 10-30% APR on stablecoins, while mitigating risk by diversifying across 10+ protocols in a single transaction</div>
         <div className="mt-4 text-xl font-bold">Why is transparency important?</div>
-        <div className="mt-2 space-y-2 text-sm">
+        <div className="mt-2 space-y-2 text-base lg:text-sm">
           <p>
             After the fall of Celsius, Gemini Earn, Hodlnaut, and 10+ platforms (where hundreds of millions of customer funds were lost), being aware of who offers{" "}
             <span className="font-bold">true transparency</span> and who offers only a veil of transprancy is of paramount importance. The aforementioned platforms simply used
