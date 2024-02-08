@@ -41,7 +41,7 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="h-[64px] xs:h-[52px] border-b border-gray-300 p-2 xs:px-4 w-full flex items-center justify-between overflow-hidden">
+    <div className="h-[64px] xs:h-[52px] border-b border-gray-300 p-2 xs:px-4 w-full flex items-center justify-between">
       {/*---logo---*/}
       <div className="w-[76px] xs:w-[120px] h-full relative">
         <Image src="/logo.svg" alt="navLogo" fill />
