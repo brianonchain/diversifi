@@ -2,14 +2,21 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+// wagmi, web3modal
+import { useAccount } from "wagmi";
+import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
 
 const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isStandalone, setIsStandalone] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { open } = useWeb3Modal();
+  const { selectedNetworkId } = useWeb3ModalState();
 
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  const account = useAccount();
 
   useEffect(() => {
     setIsMobile(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent));
@@ -41,7 +48,7 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="h-[64px] xs:h-[52px] border-b border-gray-300 p-2 xs:px-4 w-full flex items-center justify-between">
+    <div className="w-full h-[64px] xs:h-[56px] border-b border-t border-gray-300 p-2 xs:px-4 flex items-center justify-between">
       {/*---logo---*/}
       <div className="w-[76px] xs:w-[120px] h-full relative">
         <Image src="/logo.svg" alt="navLogo" fill />
@@ -49,18 +56,23 @@ const Navbar = () => {
       {/*---DESKTOP menu links---*/}
       <div className="hidden md:flex space-x-4 lg:space-x-12">
         {navLinks.map((i, index) => (
-          <div className="text-slate-800 text-lg font-semibold text-center cursor-pointer hover:text-blue-500" onClick={() => router.push(`${i.route}`)} key={index}>
+          <div className="text-lg font-semibold text-center cursor-pointer hover:text-blue-500" onClick={() => router.push(`${i.route}`)} key={index}>
             {i.title}
           </div>
         ))}
       </div>
       {/*---connect button---*/}
-      <div className="flex mr-2 xs:mr-0 xs:space-x-2">
-        <div className="hidden xs:block">
-          <w3m-network-button />
-        </div>
-        <w3m-button balance="hide" />
-      </div>
+      <button
+        className={`${
+          account.status == "disconnected" ? "bg-blue-500 lg:hover:bg-blue-400 active:bg-blue-400 text-white" : "border bg-gray-100 hover:bg-gray-200 active:bg-gray-200"
+        } text-lg font-semibold px-5 py-1 border rounded-lg `}
+        onClick={() => open()}
+      >
+        {account.status == "connected" && `${account.address.slice(0, 7)}...${account.address.slice(-4, account.address.length)}`}
+        {account.status == "connecting" && "Connecting..."}
+        {account.status == "reconnecting" && "Connecting..."}
+        {account.status == "disconnected" && "Connect"}
+      </button>
       {/*---MOBILE ONLY---*/}
       <div className="flex items-center justify-end md:hidden mr-2">
         {/*---need to wrap icon and menu into 1 div, for useRef---*/}
@@ -86,7 +98,7 @@ const Navbar = () => {
                     router.push(`${i.route}`);
                     setIsMenuOpen(false);
                   }}
-                  className="font-medium text-slate-700 text-2xl active:text-blue-500"
+                  className="font-medium text-2xl active:text-blue-500"
                 >
                   {i.title}
                 </div>

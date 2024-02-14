@@ -42,13 +42,13 @@ const Footer = () => {
     <div className="flex justify-end px-12 w-full h-[36px] border-t border-gray-200">
       <div className="flex items-center space-x-4">
         {footerLinks.map((i, index) => (
-          <Link href={i.link} target={i.external ? "_blank" : "_self"} className="text-sm font-medium text-slate-900 hover:text-blue-500 cursor-pointer">
+          <Link href={i.link} target={i.external ? "_blank" : "_self"} className="text-sm font-medium hover:text-blue-500 cursor-pointer">
             {i.title}
           </Link>
         ))}
         {socials.map((i, index) => (
           <Link href={i.link} target="_blank">
-            <FontAwesomeIcon icon={i.fa} className="text-xl text-gray-700 pt-1 hover:text-blue-500 cursor-pointer" />
+            <FontAwesomeIcon icon={i.fa} className="text-xl pt-1 hover:text-blue-500 cursor-pointer" />
           </Link>
         ))}
       </div>

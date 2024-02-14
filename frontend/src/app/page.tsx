@@ -32,7 +32,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col lg:flex-row lg:h-[calc(100vh-88px)] bg-gray-100 p-4 text-gray-700">
+    <main className="flex flex-col lg:flex-row lg:h-[calc(100vh-92px)] bg-gray-100 p-4">
       {/*---LEFT CARD---*/}
       <div className="lg:w-[30%] h-full px-4 lg:mr-4 bg-white rounded-xl drop-shadow-sm border border-gray-200 ">
         {/*---CURRENT VIEW---*/}
@@ -60,7 +60,7 @@ export default function Home() {
           </div>
         </div>
         {/*---VAULTS---*/}
-        <div className="mt-10 mb-10 lg:mb-0 border rounded-xl overflow-hidden">
+        <div className="mt-10 mb-10 lg:mb-0 border rounded-xl">
           {allVaults && selectedVault ? (
             allVaults.map((i, index) => (
               <div
