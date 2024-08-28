@@ -1,10 +1,7 @@
 "use client";
 import { createWeb3Modal, defaultWagmiConfig } from "@web3modal/wagmi/react";
-import { createConfig, WagmiConfig } from "wagmi";
+import { WagmiConfig } from "wagmi";
 import { arbitrum, polygon, optimism, base } from "viem/chains";
-// import { mainnet, sepolia } from 'wagmi/chains'
-// import { walletConnect, injected, coinbaseWallet } from "wagmi/connectors";
-
 import logo from "../../public/logo.svg";
 
 // 2. Create wagmiConfig

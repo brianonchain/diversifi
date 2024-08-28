@@ -39,16 +39,17 @@ const Footer = () => {
   ];
 
   return (
-    <div className="flex justify-end px-12 w-full h-[36px] border-t border-gray-200">
-      <div className="flex items-center space-x-4">
+    <div className="flex justify-between items-center px-[16px] w-full h-[56px] bg-blue1">
+      <div className="ml-[2px] text-sm text-slate-400">&copy; 2024 DiversiFi</div>
+      <div className="flex items-center space-x-[20px] mr-[16px]">
         {footerLinks.map((i, index) => (
-          <Link href={i.link} target={i.external ? "_blank" : "_self"} className="text-sm font-medium text-slate-900 hover:text-blue-500 cursor-pointer">
+          <Link href={i.link} target={i.external ? "_blank" : "_self"} className="text-sm font-medium hover:text-blue-500 cursor-pointer">
             {i.title}
           </Link>
         ))}
         {socials.map((i, index) => (
           <Link href={i.link} target="_blank">
-            <FontAwesomeIcon icon={i.fa} className="text-xl text-gray-700 pt-1 hover:text-blue-500 cursor-pointer" />
+            <FontAwesomeIcon icon={i.fa} className="text-xl pt-1 hover:text-blue-500 cursor-pointer" />
           </Link>
         ))}
       </div>

@@ -2,11 +2,15 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+// wagmi
+import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
 
 const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isStandalone, setIsStandalone] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { open } = useWeb3Modal();
+  const { selectedNetworkId } = useWeb3ModalState();
 
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -41,35 +45,46 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="h-[64px] xs:h-[52px] border-b border-gray-300 p-2 xs:px-4 w-full flex items-center justify-between">
+    <div className="w-full h-[64px] px-[16px] flex items-center justify-between bg-blue1 text-white">
       {/*---logo---*/}
-      <div className="w-[76px] xs:w-[120px] h-full relative">
+      <div className="ml-[2px] w-[76px] xs:w-[140px] h-full relative">
         <Image src="/logo.svg" alt="navLogo" fill />
       </div>
       {/*---DESKTOP menu links---*/}
       <div className="hidden md:flex space-x-4 lg:space-x-12">
         {navLinks.map((i, index) => (
-          <div className="text-slate-800 text-lg font-semibold text-center cursor-pointer hover:text-blue-500" onClick={() => router.push(`${i.route}`)} key={index}>
+          <div
+            className="text-lg font-semibold text-center cursor-pointer hover:text-blue-500"
+            onClick={() => router.push(`${i.route}`)}
+            key={index}
+          >
             {i.title}
           </div>
         ))}
       </div>
-      {/*---connect button---*/}
-      <div className="flex mr-2 xs:mr-0 xs:space-x-2">
-        <div className="hidden xs:block">
-          <w3m-network-button />
-        </div>
-        <w3m-button balance="hide" />
-      </div>
+      {/*--- DESKTOP connect button---*/}
+      <button className="buttonPrimary" onClick={() => open()}>
+        Connect
+      </button>
       {/*---MOBILE ONLY---*/}
       <div className="flex items-center justify-end md:hidden mr-2">
         {/*---need to wrap icon and menu into 1 div, for useRef---*/}
         <div ref={ref}>
           {/*---animated menu open/close icon ---*/}
           <div onClick={() => setIsMenuOpen(!isMenuOpen)} className="relative h-[36px] w-[36px]">
-            <div className={`${isMenuOpen ? "rotate-45 top-[16px] scale-110" : "top-[4px]"} absolute bg-black h-[3px] w-[36px] rounded transition-all duration-500`}></div>
-            <div className={`${isMenuOpen ? "hidden" : ""} absolute bg-black h-[3px] w-[36px] rounded top-[16px] transition-all duration-500`}></div>
-            <div className={`${isMenuOpen ? "-rotate-45 top-[16px] scale-110" : "top-[28px]"} absolute bg-black h-[3px] w-[36px] rounded transition-all duration-500`}></div>
+            <div
+              className={`${
+                isMenuOpen ? "rotate-45 top-[16px] scale-110" : "top-[4px]"
+              } absolute bg-black h-[3px] w-[36px] rounded transition-all duration-500`}
+            ></div>
+            <div
+              className={`${isMenuOpen ? "hidden" : ""} absolute bg-black h-[3px] w-[36px] rounded top-[16px] transition-all duration-500`}
+            ></div>
+            <div
+              className={`${
+                isMenuOpen ? "-rotate-45 top-[16px] scale-110" : "top-[28px]"
+              } absolute bg-black h-[3px] w-[36px] rounded transition-all duration-500`}
+            ></div>
           </div>
           {/*---menu contents---*/}
           <div
@@ -86,7 +101,7 @@ const Navbar = () => {
                     router.push(`${i.route}`);
                     setIsMenuOpen(false);
                   }}
-                  className="font-medium text-slate-700 text-2xl active:text-blue-500"
+                  className="font-medium text-2xl active:text-blue-500"
                 >
                   {i.title}
                 </div>

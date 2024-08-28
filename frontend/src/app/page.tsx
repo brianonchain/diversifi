@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import LineChart from "./_components/Chart";
 
 export default function Home() {
   type Vault = {
@@ -32,9 +33,9 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col lg:flex-row lg:h-[calc(100vh-88px)] bg-gray-100 p-4 text-gray-700">
+    <main className="px-[16px] flex flex-col lg:flex-row lg:space-x-[16px] lg:h-[calc(100vh-120px)] bg-blue1">
       {/*---LEFT CARD---*/}
-      <div className="lg:w-[30%] h-full px-4 lg:mr-4 bg-white rounded-xl drop-shadow-sm border border-gray-200 ">
+      <div className="cardBg lg:w-[30%] h-full px-4 rounded-xl">
         {/*---CURRENT VIEW---*/}
         <div className="mt-5">
           {/*---title---*/}
@@ -44,17 +45,17 @@ export default function Home() {
             {selectedVault ? `$${Number((selectedVault.principal + selectedVault.earned).toFixed(2)).toLocaleString()}` : "..."}
           </div>
           {/*---details---*/}
-          <div className="mt-2 px-1 flex justify-between">
+          <div className="mt-4 px-1 flex justify-between">
             <div className="flex flex-col">
-              <div className="text-xs font-medium text-gray-400">PRINCIPAL</div>
+              <div className="text-xs font-medium text-text2">PRINCIPAL</div>
               <div>{selectedVault ? `$${Number(selectedVault.principal.toFixed(2)).toLocaleString()}` : "..."}</div>
             </div>
             <div className="flex flex-col">
-              <div className="text-xs font-medium text-gray-400">EARNED</div>
+              <div className="text-xs font-medium text-text2">EARNED</div>
               <div>{selectedVault ? `$${Number(selectedVault.earned.toFixed(2)).toLocaleString()}` : "..."}</div>
             </div>
             <div className="flex flex-col">
-              <div className="text-xs font-medium text-gray-400">PERFORMANCE</div>
+              <div className="text-xs font-medium text-text2">PERFORMANCE</div>
               <div>{selectedVault ? `${Number(selectedVault.performance.toFixed(1))}%` : "..."}</div>
             </div>
           </div>
@@ -66,9 +67,9 @@ export default function Home() {
               <div
                 id={i.id}
                 onClick={onClickVault}
-                className={`${
-                  selectedVault.id === i.id ? "text-gray-800 bg-gray-100" : "text-gray-500"
-                } h-[52px] font-bold flex items-center px-4 hover:bg-gray-100 cursor-pointer ${index === allVaults.length - 1 ? "" : "border-b"}`}
+                className={`${selectedVault.id === i.id ? "bg-button1" : ""} ${
+                  index === allVaults.length - 1 ? "" : "border-b"
+                } h-[52px] font-bold flex items-center px-4 hover:bg-blue4 cursor-pointer`}
               >
                 {i.title}
               </div>
@@ -79,9 +80,12 @@ export default function Home() {
         </div>
       </div>
       {/*---right menu---*/}
-      <div className="lg:w-[70%] mt-4 lg:mt-0 h-full flex flex-col">
-        <div className="w-full h-[250px] lg:h-[50%] bg-white p-4 rounded-xl drop-shadow-sm border border-gray-200 text-sm">performance chart</div>
-        <div className="p-4 h-[250px] lg:h-auto text-sm">vault details</div>
+      <div className="mt-4 lg:mt-0 lg:w-[70%] h-full flex flex-col space-y-[16px] text-sm">
+        <div className="cardBg3 p-4 w-full h-[50%] rounded-xl flex flex-col space-y-[12px]">
+          <div className="font-medium">Performance: {selectedVault?.title ?? ""}</div>
+          {selectedVault && <LineChart selectedVault={selectedVault} />}
+        </div>
+        <div className="p-4 w-full h-[50%] border-2 border-blue2 rounded-xl">Vault Details</div>
       </div>
     </main>
   );
