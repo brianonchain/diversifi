@@ -12,6 +12,9 @@
   .buttonPrimary {
     @apply text-base font-semibold px-6 py-2 rounded-lg bg-button1 lg:hover:brightness-[1.2] active:brightness-[1.2] text-white;
   }
+  .buttonSecondary {
+    @apply text-base font-medium px-4 py-2 rounded-lg border border-[#253680] lg:hover:brightness-[1.2] active:brightness-[1.2] text-white;
+  }
 }
 
 @layer utilities {
@@ -23,9 +26,15 @@
     background: radial-gradient(circle farthest-side at -10% 50%, #28387e, #1c285d 20%, #090f3a 100%);
   }
 
+  .cardBg1 {
+    background: radial-gradient(circle at 85% -4%, #223374, #050833, transparent),
+      radial-gradient(circle at 15% 110%, #3a156c, #260432, transparent);
+    background-blend-mode: color;
+  }
+
   .cardBg2 {
-    background: radial-gradient(circle at 0% 15%, #223374, #050833, transparent),
-      radial-gradient(circle at bottom right, #3a156c, #260432, transparent);
+    background: radial-gradient(circle at 15% 0%, #223374, #050833, transparent),
+      radial-gradient(circle at 85% 100%, #3a156c, #260432, transparent);
     background-blend-mode: color;
   }
 
@@ -34,7 +43,7 @@
   }
 
   .cardBg4 {
-    @apply border border-[#285CAF] bg-[#041249];
+    @apply border border-[#285CAF] bg-[#3e3d79] bg-opacity-[15%];
   }
 
   .cardGlass {
@@ -43,5 +52,9 @@
 
   .selectGlass {
     @apply bg-gradient-to-br from-[#1F306F] to-[#102260] border-2 border-[#283d87];
+  }
+
+  .bgVaults {
+    background: radial-gradient(circle farthest-side at 50% 100%, #232686, #0e1145, #050929 90%);
   }
 }

@@ -5,7 +5,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        blue1: "#010323",
+        blue1: "#050929",
         blue2: "#0F226B",
         blue3: "#2C247D",
         blue4: "#0364FF",
@@ -22,6 +22,9 @@ const config: Config = {
       xl: "1280px",
       "2xl": "1536px",
     },
+    // backgroundImage: {
+    //   "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+    // },
   },
   plugins: [],
 };

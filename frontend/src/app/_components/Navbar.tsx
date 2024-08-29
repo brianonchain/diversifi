@@ -4,16 +4,30 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 // wagmi
 import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
+import { useAccount, useWalletClient, useDisconnect, useAccountEffect } from "wagmi";
+// images
+import { FaCircle } from "react-icons/fa";
 
 const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
-  const [isStandalone, setIsStandalone] = useState<boolean>(false);
+  const [isStandalone, setIsStandalone] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // hooks
   const { open } = useWeb3Modal();
   const { selectedNetworkId } = useWeb3ModalState();
-
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const { isConnected, address } = useAccount();
+
+  useAccountEffect({
+    onConnect(data) {
+      console.log("WAGMI Connected!", data);
+    },
+    onDisconnect() {
+      console.log("WAGMI Disconnected!");
+    },
+  });
 
   useEffect(() => {
     setIsMobile(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent));
@@ -63,9 +77,15 @@ const Navbar = () => {
         ))}
       </div>
       {/*--- DESKTOP connect button---*/}
-      <button className="buttonPrimary" onClick={() => open()}>
-        Connect
-      </button>
+      {isConnected ? (
+        <button className="buttonSecondary flex items-center" onClick={() => open({ view: "Account" })}>
+          <FaCircle className="mr-2 text-green-500 w-[12px] h-[12px]" /> {address?.slice(0, 6)}...{address?.slice(-4)}
+        </button>
+      ) : (
+        <button className="buttonPrimary" onClick={() => open()}>
+          Connect
+        </button>
+      )}
       {/*---MOBILE ONLY---*/}
       <div className="flex items-center justify-end md:hidden mr-2">
         {/*---need to wrap icon and menu into 1 div, for useRef---*/}

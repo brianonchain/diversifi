@@ -4,8 +4,7 @@ import { Chart, registerables } from "chart.js";
 Chart.register(...registerables);
 
 const LineChart = ({ selectedVault }: { selectedVault: any }) => {
-  console.log(selectedVault);
-  const [label, setLabel] = useState("All Vaults");
+  // console.log("selectedVault:", selectedVault);
 
   const data: any = {
     all: [
@@ -40,6 +39,7 @@ const LineChart = ({ selectedVault }: { selectedVault: any }) => {
           ],
         }}
         options={{
+          animation: false,
           responsive: true,
           scales: {
             y: {

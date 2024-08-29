@@ -66,6 +66,7 @@ export default function Home() {
             allVaults.map((i, index) => (
               <div
                 id={i.id}
+                key={index}
                 onClick={onClickVault}
                 className={`${selectedVault.id === i.id ? "bg-button1" : ""} ${
                   index === allVaults.length - 1 ? "" : "border-b"
@@ -81,7 +82,7 @@ export default function Home() {
       </div>
       {/*---right menu---*/}
       <div className="mt-4 lg:mt-0 lg:w-[70%] h-full flex flex-col space-y-[16px] text-sm">
-        <div className="cardBg3 p-4 w-full h-[50%] rounded-xl flex flex-col space-y-[12px]">
+        <div className="cardBg2 p-4 w-full h-[50%] rounded-xl flex flex-col space-y-[12px]">
           <div className="font-medium">Performance: {selectedVault?.title ?? ""}</div>
           {selectedVault && <LineChart selectedVault={selectedVault} />}
         </div>
