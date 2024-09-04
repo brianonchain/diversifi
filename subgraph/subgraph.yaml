@@ -1,0 +1,29 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Contract
+    network: matic
+    source:
+      address: "0x599559Ed394ADd1117ab72667e49d1560A2124E0"
+      abi: Contract
+      startBlock: 61328490
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - DepositEvent
+        - WithdrawalEvent
+      abis:
+        - name: Contract
+          file: ./abis/Contract.json
+      eventHandlers:
+        - event: DepositEvent(indexed address,uint256)
+          handler: handleDepositEvent
+        - event: WithdrawalEvent(indexed address,uint256)
+          handler: handleWithdrawalEvent
+      file: ./src/contract.ts
