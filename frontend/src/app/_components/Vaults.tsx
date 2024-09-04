@@ -45,7 +45,7 @@ const page = () => {
   //state
   const [selectedVault, setSelectedVault] = useState<Vault>(allVaults[chain?.id.toString() ?? "137"][0]);
   const [amount, setAmount] = useState<string | undefined>();
-  const [isApproveNeeded, setIsApproveNeeded] = useState(true);
+  const [isApproveNeeded, setIsApproveNeeded] = useState(false);
   const [txState, setTxState] = useState("initial"); // initial | approve | approving | deposit | depositing | withdraw | withdrawing | final
   const [txHash, setTxHash] = useState("");
   // balances
@@ -386,6 +386,7 @@ const page = () => {
           depositOrWithdraw={depositOrWithdraw}
           isApproveNeeded={isApproveNeeded}
           selectedVault={selectedVault}
+          txHash={txHash}
         />
       )}
     </main>
