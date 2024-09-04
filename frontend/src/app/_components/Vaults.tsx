@@ -47,7 +47,7 @@ const page = () => {
   const [amount, setAmount] = useState<string | undefined>();
   const [isApproveNeeded, setIsApproveNeeded] = useState(false);
   const [txState, setTxState] = useState("initial"); // initial | approve | approving | deposit | depositing | withdraw | withdrawing | final
-  const [txHash, setTxHash] = useState("");
+  const [txHash, setTxHash] = useState("0x0");
   // balances
   const [usdcBalance, setUsdcBalance] = useState<string | undefined>();
   const [usdcAllowance, setUsdcAllowance] = useState<string | undefined>();
