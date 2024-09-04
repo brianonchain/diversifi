@@ -1,7 +1,6 @@
 "use client";
 // nextjs
 import { useState, useEffect } from "react";
-import Image from "next/image";
 // components
 import LineChart from "@/app/_components/Chart";
 
@@ -22,19 +21,12 @@ const Dashboard = () => {
     // "all" can be calculated in frontend or backend
     const data = [
       { id: "all", title: "All Vaults", principal: 12000, earned: 1560.2462, performance: 16.8 },
-      { id: "sol-jlp", title: "SOLANA: JLP Vault", principal: 5000, earned: 826.1231, performance: 12.4 },
-      { id: "base-stable1", title: "BASE: Stablecoin Vault", principal: 7000, earned: 734.1231, performance: 19.2 },
+      { id: "polygon-stable1", title: "Polygon Stablecoin Vault", principal: 5000, earned: 826.1231, performance: 12.4 },
+      { id: "base-stable1", title: "Base Stablecoin Vault", principal: 7000, earned: 734.1231, performance: 19.2 },
     ];
     setAllVaultData(data);
     setSelectedVaultData(data[0]);
   }, []);
-
-  const onClickVault = (e: React.MouseEvent<HTMLElement>) => {
-    if (allVaultData != undefined) {
-      const vaultIndex = allVaultData.findIndex((i) => i.id === e.currentTarget.id);
-      setSelectedVaultData(allVaultData[vaultIndex]);
-    }
-  };
 
   return (
     <main className="w-full min-h-[540px] lg:h-[calc(100vh-120px)] px-[16px] flex flex-col lg:flex-row lg:space-x-[16px]">
@@ -77,7 +69,12 @@ const Dashboard = () => {
               <div
                 id={i.id}
                 key={index}
-                onClick={onClickVault}
+                onClick={(e) => {
+                  if (allVaultData != undefined) {
+                    const vaultIndex = allVaultData.findIndex((i) => i.id === e.currentTarget.id);
+                    setSelectedVaultData(allVaultData[vaultIndex]);
+                  }
+                }}
                 className={`${selectedVaultData.id === i.id ? "bg-button1" : ""} ${
                   index === allVaultData.length - 1 ? "" : "border-b"
                 } h-[52px] font-bold flex items-center px-4 hover:bg-blue4 transition-color duration-300 cursor-pointer`}

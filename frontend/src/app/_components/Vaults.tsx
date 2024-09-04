@@ -139,7 +139,11 @@ const page = () => {
           args: ["0x599559Ed394ADd1117ab72667e49d1560A2124E0", parseUnits(amount, 6)],
         });
         setTxState("approving");
-        await waitForTransactionReceipt(config, { hash: approveHash });
+        await waitForTransactionReceipt(config, {
+          hash: approveHash,
+          timeout: 60000,
+          confirmations: 3,
+        });
         console.log("approveHash", approveHash);
       }
       // deposit
@@ -151,7 +155,7 @@ const page = () => {
         args: [parseUnits(amount, 6)],
       });
       setTxState("depositing");
-      await waitForTransactionReceipt(config, { hash: depositHash });
+      await waitForTransactionReceipt(config, { hash: depositHash, timeout: 60000 });
       setTxHash(depositHash);
       setTxState("final");
       console.log("depositHash", depositHash);
@@ -199,7 +203,7 @@ const page = () => {
         args: [parseUnits(amount, 6)],
       });
       setTxState("withdrawing");
-      await waitForTransactionReceipt(config, { hash: withdrawHash });
+      await waitForTransactionReceipt(config, { hash: withdrawHash, timeout: 60000 });
       setTxHash(withdrawHash);
       setTxState("final");
     } catch (e) {
@@ -302,74 +306,81 @@ const page = () => {
             </div>
             {/*--- lighter blue ---*/}
             <div className="px-[30px] py-[24px] h-[240px] flex flex-col items-center justify-center rounded-b-xl bg-blue-300 bg-opacity-[10%]">
-              {(chain?.id == 137 && depositOrWithdraw == "Deposit" && usdcBalance) || (chain?.id == 137 && depositOrWithdraw == "Withdraw" && vaultBalance) ? (
+              {isConnected ? (
                 <div>
-                  {/*--- info above box ---*/}
-                  <div className="px-1 w-full flex justify-between items-center">
-                    <div className="text-sm text-slate-400 font-medium">Amount</div>
-                    <div className="text-xs">
-                      Balance: {depositOrWithdraw == "Deposit" ? Number(usdcBalance)?.toFixed(2) : Number(vaultBalance)?.toFixed(2)}
-                    </div>
-                  </div>
-                  {/*--- input box ---*/}
-                  <div className="w-full flex items-center rounded-xl bg-blue1 border border-blue3 focus:border-blue4">
-                    <input
-                      id="amount"
-                      className="mt-0.5 w-[168px] h-[48px] px-4 bg-transparent outline-none text-xl font-semibold focus:placeholder:text-transparent placeholder:text-slate-400 [&::-webkit-inner-spin-button]:appearance-none"
-                      type="number"
-                      autoComplete="off"
-                      placeholder="0"
-                      // amount ?? "" is needed as value = undefined will give "uncontrolled" error
-                      value={amount ?? ""}
-                      onChange={(e) => {
-                        if (e.currentTarget.value.split(".")[1]?.length > 6) {
-                          return;
-                        }
-                        setAmount(e.currentTarget.value);
-                      }}
-                    ></input>
-                    <div className="w-[120px] flex px-4 space-x-[6px]">
-                      <Image src="/usdc.svg" alt="usdc" width={0} height={0} className="w-[24px]" />
-                      <div className="text-xl font-semibold">USDC</div>
-                    </div>
-                  </div>
-                  {/*--- input range ---*/}
-                  <input
-                    className="mt-2 w-full h-[6px] appearance-none bg-slate-600 accent-blue4 rounded-full"
-                    type="range"
-                    step="0.01"
-                    value={amount ? (Number(amount) / Number(depositOrWithdraw == "Deposit" ? usdcBalance : vaultBalance)) * 100 : 0}
-                    onChange={(e) =>
-                      setAmount(((Number(depositOrWithdraw == "Deposit" ? usdcBalance : vaultBalance) * Number(e.currentTarget.value)) / 100).toFixed(2))
-                    }
-                  ></input>
-                  {/*--- range values ---*/}
-                  <div className="mt-1 w-full flex justify-between text-[13px] text-slate-400">
-                    {rangeValues.map((i) => (
-                      <div
-                        key={i}
-                        className="hover:text-slate-200 cursor-pointer"
-                        onClick={() =>
-                          i == 100
-                            ? setAmount(depositOrWithdraw == "Deposit" ? usdcBalance : vaultBalance)
-                            : setAmount(((i / 100) * Number(depositOrWithdraw == "Deposit" ? usdcBalance : vaultBalance)).toFixed(2))
-                        }
-                      >
-                        {i}%
+                  {(chain?.id == 137 && depositOrWithdraw == "Deposit" && usdcBalance) ||
+                  (chain?.id == 137 && depositOrWithdraw == "Withdraw" && vaultBalance) ? (
+                    <div>
+                      {/*--- info above box ---*/}
+                      <div className="px-1 w-full flex justify-between items-center">
+                        <div className="text-sm text-slate-400 font-medium">Amount</div>
+                        <div className="text-xs">
+                          Balance: {depositOrWithdraw == "Deposit" ? Number(usdcBalance)?.toFixed(2) : Number(vaultBalance)?.toFixed(2)}
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                  {/*--- buttons ---*/}
-                  <button
-                    className="mt-8 buttonPrimary w-full"
-                    onClick={() => (depositOrWithdraw == "Deposit" ? deposit() : withdraw())}
-                    disabled={txState != "initial"}
-                  >
-                    {depositOrWithdraw}
-                  </button>
+                      {/*--- input box ---*/}
+                      <div className="w-full flex items-center rounded-xl bg-blue1 border border-blue3 focus:border-blue4">
+                        <input
+                          id="amount"
+                          className="mt-0.5 w-[168px] h-[48px] px-4 bg-transparent outline-none text-xl font-semibold focus:placeholder:text-transparent placeholder:text-slate-400 [&::-webkit-inner-spin-button]:appearance-none"
+                          type="number"
+                          autoComplete="off"
+                          placeholder="0"
+                          // amount ?? "" is needed as value = undefined will give "uncontrolled" error
+                          value={amount ?? ""}
+                          onChange={(e) => {
+                            if (e.currentTarget.value.split(".")[1]?.length > 6) {
+                              return;
+                            }
+                            setAmount(e.currentTarget.value);
+                          }}
+                        ></input>
+                        <div className="w-[120px] flex px-4 space-x-[6px]">
+                          <Image src="/usdc.svg" alt="usdc" width={0} height={0} className="w-[24px]" />
+                          <div className="text-xl font-semibold">USDC</div>
+                        </div>
+                      </div>
+                      {/*--- input range ---*/}
+                      <input
+                        className="mt-2 w-full h-[6px] appearance-none bg-slate-600 accent-blue4 rounded-full"
+                        type="range"
+                        step="0.01"
+                        value={amount ? (Number(amount) / Number(depositOrWithdraw == "Deposit" ? usdcBalance : vaultBalance)) * 100 : 0}
+                        onChange={(e) =>
+                          setAmount(((Number(depositOrWithdraw == "Deposit" ? usdcBalance : vaultBalance) * Number(e.currentTarget.value)) / 100).toFixed(2))
+                        }
+                      ></input>
+                      {/*--- range values ---*/}
+                      <div className="mt-1 w-full flex justify-between text-[13px] text-slate-400">
+                        {rangeValues.map((i) => (
+                          <div
+                            key={i}
+                            className="hover:text-slate-200 cursor-pointer"
+                            onClick={() =>
+                              i == 100
+                                ? setAmount(depositOrWithdraw == "Deposit" ? usdcBalance : vaultBalance)
+                                : setAmount(((i / 100) * Number(depositOrWithdraw == "Deposit" ? usdcBalance : vaultBalance)).toFixed(2))
+                            }
+                          >
+                            {i}%
+                          </div>
+                        ))}
+                      </div>
+                      {/*--- buttons ---*/}
+                      <button
+                        className="mt-8 buttonPrimary w-full"
+                        onClick={() => (depositOrWithdraw == "Deposit" ? deposit() : withdraw())}
+                        disabled={txState != "initial"}
+                      >
+                        {depositOrWithdraw}
+                      </button>
+                    </div>
+                  ) : (
+                    <LoadingGray40 />
+                  )}
                 </div>
               ) : (
-                <LoadingGray40 />
+                <div className="text-center h-full flex items-center text-slate-500">Connect wallet to deposit</div>
               )}
             </div>
           </div>
