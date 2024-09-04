@@ -2,14 +2,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { headers } from "next/headers";
+import "./globals.css";
 // wagmi & AppKit
 import { cookieToInitialState } from "wagmi";
 import { config } from "@/config";
 import AppKitProvider from "@/context";
-// components
-import Navbar from "./_components/Navbar";
-import Footer from "./_components/Footer";
-import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,11 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${inter.className} overflow-x-hidden text-white`}>
-        <AppKitProvider initialState={initialState}>
-          <Navbar />
-          {children}
-          <Footer />
-        </AppKitProvider>
+        <AppKitProvider initialState={initialState}>{children}</AppKitProvider>
       </body>
     </html>
   );

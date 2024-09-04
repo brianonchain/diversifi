@@ -1,8 +1,8 @@
 import Link from "next/link";
 
-const page = () => {
+const About = () => {
   return (
-    <div className="flex flex-col items-center px-2 lg:px-0 py-6 xs:py-12 bg-blue1">
+    <div className="w-full min-h-[400px] flex flex-col items-center px-2 lg:px-0 py-6 xs:py-12 bg-blue1">
       <div className="lg:w-[700px]">
         <div className="flex-col items-center text-4xl xs:text-[45px] leading-tight font-bold text-center">
           Transparent, hyper-diversified, stablecoin yields
@@ -65,4 +65,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default About;

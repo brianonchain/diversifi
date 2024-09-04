@@ -1,11 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 Chart.register(...registerables);
 
-const LineChart = ({ selectedVault }: { selectedVault: any }) => {
-  // console.log("selectedVault:", selectedVault);
-
+const LineChart = ({ selectedVaultData }: { selectedVaultData: any }) => {
   const data: any = {
     all: [
       13351.2462, 13359.2462, 13369.2462, 13380.2462, 13385.2462, 13390.2462, 13395.2462, 13398.2462, 13405.2462, 13415.2462, 13419.2462,
@@ -25,68 +23,77 @@ const LineChart = ({ selectedVault }: { selectedVault: any }) => {
   };
 
   return (
-    <div className="w-full h-[90%] flex justify-center">
-      <Line
-        data={{
-          labels: Array.from(Array(30).keys()),
-          datasets: [
-            {
-              label: selectedVault?.title ?? "",
-              data: data[selectedVault?.id] ?? [],
-              backgroundColor: "rgb(255,206,27)",
-              borderColor: "rgb(255,206,27)",
-            },
-          ],
-        }}
-        options={{
-          animation: false,
-          responsive: true,
-          scales: {
-            y: {
-              ticks: {
-                color: "white",
-                backdropColor: "white",
-                display: true,
-                callback: (value, index, values) => {
-                  return "$" + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                },
-              },
-              border: { color: "white" },
-              grid: {
-                display: true,
-                color: "#233171",
+    <Line
+      data={{
+        labels: Array.from(Array(30).keys()),
+        datasets: [
+          {
+            label: selectedVaultData?.title ?? "",
+            data: data[selectedVaultData?.id] ?? [],
+            backgroundColor: "rgb(255,206,27)",
+            borderColor: "rgb(255,206,27)",
+          },
+        ],
+      }}
+      options={{
+        transitions: { active: { animation: { duration: 0 } } },
+        animation: false,
+        responsive: true,
+        scales: {
+          y: {
+            ticks: {
+              color: "white",
+              backdropColor: "white",
+              display: true,
+              callback: (value, index, values) => {
+                return "$" + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
               },
             },
-            x: {
-              ticks: { color: "white", backdropColor: "white", display: true },
-              border: { color: "white" },
-              grid: {
-                display: false,
-                color: "#2C247D",
-              },
-              title: { text: "July 2024", display: true, color: "white" },
+            border: { color: "white" },
+            grid: {
+              display: true,
+              color: "#233171",
             },
           },
-          showLine: true,
-          elements: {
-            point: {
-              radius: 0,
-            },
-          },
-          plugins: {
-            legend: {
+          x: {
+            ticks: { color: "white", backdropColor: "white", display: true },
+            border: { color: "white" },
+            grid: {
               display: false,
-              labels: { color: "white", padding: 30 },
+              color: "#2C247D",
+            },
+            title: { text: "July 2024", display: true, color: "white" },
+          },
+        },
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            displayColors: false,
+            callbacks: {
+              title: (context) => {
+                return `Day ${context[0].parsed.x}`;
+              },
+              label: (context) => {
+                return `$${context.parsed.y.toFixed(2)}`;
+              },
             },
           },
-          interaction: {
-            intersect: false,
-            mode: "index",
+        },
+        showLine: true,
+        elements: {
+          point: {
+            radius: 0,
           },
-          spanGaps: false,
-        }}
-      />
-    </div>
+        },
+        interaction: {
+          intersect: false,
+          mode: "index",
+        },
+        spanGaps: false,
+      }}
+    />
   );
 };
 

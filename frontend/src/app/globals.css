@@ -9,11 +9,76 @@
 }
 
 @layer components {
-  .buttonPrimary {
-    @apply text-base font-semibold px-6 py-2 rounded-lg bg-button1 lg:hover:brightness-[1.2] active:brightness-[1.2] text-white;
+  .errorModalFont {
+    @apply text-lg;
   }
+
+  .buttonPrimary {
+    @apply text-base font-semibold px-6 py-2 rounded-lg bg-button1 text-white hover:brightness-[1.3] active:brightness-[1.3] transition-all duration-300;
+  }
+
+  .buttonDisabled {
+    @apply text-base font-semibold px-6 py-2 rounded-lg bg-slate-500 text-white cursor-default;
+  }
+
   .buttonSecondary {
-    @apply text-base font-medium px-4 py-2 rounded-lg border border-[#253680] lg:hover:brightness-[1.2] active:brightness-[1.2] text-white;
+    @apply text-base font-medium px-4 py-2 rounded-lg border border-[#253680] hover:brightness-[1.3] active:brightness-[1.3] text-white;
+  }
+
+  .modalBase {
+    @apply flex flex-col items-center rounded-[16px] fixed left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%] z-[11];
+  }
+
+  .modalColor {
+    @apply bg-gradient-to-br from-blue2 to-blue1 border-2 border-blue2;
+  }
+
+  .errorModalSize {
+    @apply w-[440px] max-h-[90%];
+  }
+
+  .txModalSize {
+    @apply w-[440px] h-[400px];
+  }
+
+  .modalXpadding {
+    @apply px-[32px];
+  }
+
+  .modalYpadding {
+    @apply py-[24px];
+  }
+
+  .txModal {
+    @apply modalBase modalColor txModalSize modalYpadding;
+  }
+
+  .errorModal {
+    @apply modalBase modalColor errorModalSize modalYpadding;
+  }
+
+  .modalButtonContainer {
+    @apply pt-[36px] pb-[20px] w-full flex flex-col items-center space-y-[24px];
+  }
+
+  .modalBlackout {
+    @apply opacity-[70%] dark:opacity-[88%] fixed inset-0 bg-black backdrop-blur-xl z-[10];
+  }
+
+  .skeleton {
+    @apply bg-[#354981] bg-opacity-50 rounded-md animate-pulse text-transparent select-none;
+  }
+
+  .skeletonArea {
+    @apply bg-[#354981] bg-opacity-50 rounded-xl animate-pulse;
+  }
+
+  .number {
+    @apply w-[32px] h-[32px] bg-blue-300 rounded-full flex items-center justify-center font-bold bg-opacity-40;
+  }
+
+  .check {
+    @apply w-[32px] h-[32px] bg-green-500 rounded-full flex items-center justify-center font-bold;
   }
 }
 
@@ -27,14 +92,12 @@
   }
 
   .cardBg1 {
-    background: radial-gradient(circle at 85% -4%, #223374, #050833, transparent),
-      radial-gradient(circle at 15% 110%, #3a156c, #260432, transparent);
+    background: radial-gradient(circle at 85% -4%, #223374, #050833, transparent), radial-gradient(circle at 15% 110%, #3a156c, #260432, transparent);
     background-blend-mode: color;
   }
 
   .cardBg2 {
-    background: radial-gradient(circle at 15% 0%, #223374, #050833, transparent),
-      radial-gradient(circle at 85% 100%, #3a156c, #260432, transparent);
+    background: radial-gradient(circle at 15% 0%, #223374, #050833, transparent), radial-gradient(circle at 85% 100%, #3a156c, #260432, transparent);
     background-blend-mode: color;
   }
 
@@ -56,5 +119,22 @@
 
   .bgVaults {
     background: radial-gradient(circle farthest-side at 50% 100%, #232686, #0e1145, #050929 90%);
+  }
+
+  /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #04aa6d; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+  }
+
+  .slider::-moz-range-thumb {
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #04aa6d; /* Green background */
+    cursor: pointer; /* Cursor on hover */
   }
 }
