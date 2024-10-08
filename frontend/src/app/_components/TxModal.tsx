@@ -6,7 +6,7 @@ import { LoadingGray32 } from "@/app/_components/LoadingGray";
 import { PiHandDepositLight, PiHandWithdrawLight } from "react-icons/pi";
 import { LuExternalLink } from "react-icons/lu";
 // types
-import { Vault } from "@/db/UserModel";
+import { VaultInfo } from "@/app/vaults/page";
 
 const TxModal = ({
   txState,
@@ -26,7 +26,7 @@ const TxModal = ({
   setAmount: any;
   depositOrWithdraw: string;
   isApproveNeeded: boolean;
-  selectedVault: Vault;
+  selectedVault: VaultInfo;
   txHash: string;
 }) => {
   return (
