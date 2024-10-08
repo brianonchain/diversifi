@@ -15,12 +15,13 @@ import { LoadingGray24, LoadingGray40 } from "@/app/_components/LoadingGray";
 import { erc20Abi } from "@/constants/abis/erc20Abi";
 import { depositAbi } from "@/constants/abis/depositAbi";
 
-export type Vault = {
+export type VaultInfo = {
   id: string;
   title: string;
   src: string;
 };
-const allVaults: { [key: string]: Vault[] } = {
+
+const allVaults: { [key: string]: VaultInfo[] } = {
   "137": [{ id: "polygon-stables1", title: "Polygon Stablecoin Vault", src: "/polygon-stables1.svg" }],
   "10": [{ id: "op-stables1", title: "Optimism Stablecoin Vault", src: "/op-stables1.svg" }],
   "42161": [
@@ -51,7 +52,7 @@ export default function Vaults() {
   const config = useConfig();
 
   //state
-  const [selectedVault, setSelectedVault] = useState<Vault>(allVaults[chain?.id.toString() ?? "137"][0]);
+  const [selectedVault, setSelectedVault] = useState<VaultInfo>(allVaults[chain?.id.toString() ?? "137"][0]);
   const [amount, setAmount] = useState<string | undefined>();
   const [isApproveNeeded, setIsApproveNeeded] = useState(false);
   const [txState, setTxState] = useState("initial"); // initial | approve | approving | deposit | depositing | withdraw | withdrawing | final

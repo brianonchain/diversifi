@@ -6,7 +6,7 @@ import { LoadingGray32 } from "@/app/_components/LoadingGray";
 import { PiHandDepositLight, PiHandWithdrawLight } from "react-icons/pi";
 import { LuExternalLink } from "react-icons/lu";
 // types
-import { Vault } from "./Vaults";
+import { Vault } from "@/db/UserModel";
 
 const TxModal = ({
   txState,
@@ -77,11 +77,7 @@ const TxModal = ({
                   {txState == "final" && (
                     <div className="flex items-center space-x-4">
                       <p>Transaction completed</p>
-                      <Link
-                        className="text-sm text-blue-500 flex items-center space-x-1 hover:brightness-125"
-                        href={`https://polygonscan.com/tx/${txHash}`}
-                        target="_blank"
-                      >
+                      <Link className="text-sm text-blue-500 flex items-center space-x-1 hover:brightness-125" href={`https://polygonscan.com/tx/${txHash}`} target="_blank">
                         <p>view txn</p>
                         <LuExternalLink />
                       </Link>
@@ -130,11 +126,7 @@ const TxModal = ({
                 {txState == "final" && (
                   <div className="flex items-center space-x-4">
                     <p>Transaction completed</p>
-                    <Link
-                      className="text-sm text-blue-500 flex items-center space-x-1 hover:brightness-125"
-                      href={`https://polygonscan.com/tx/${txHash}`}
-                      target="_blank"
-                    >
+                    <Link className="text-sm text-blue-500 flex items-center space-x-1 hover:brightness-125" href={`https://polygonscan.com/tx/${txHash}`} target="_blank">
                       <p>view txn</p>
                       <LuExternalLink />
                     </Link>

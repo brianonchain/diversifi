@@ -2,15 +2,13 @@
 // components
 import LineChart from "./_components/Chart";
 import SelectVault from "./_components/SelectVault";
-// redux
-import { store } from "@/state/store";
-// types
-import { Vault } from "@/db/UserModel";
 // db
 import dbConnect from "@/db/dbConnect";
 import UserModel from "@/db/UserModel";
+
 // redux
 import { RootState } from "@/state/store";
+import { store } from "@/state/store";
 
 export default async function Dashboard({ searchParams }: { searchParams?: { vaultIndex: number } }) {
   // make API call to databse
