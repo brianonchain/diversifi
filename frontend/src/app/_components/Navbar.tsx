@@ -1,19 +1,30 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 // wagmi
-import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
-import { useAccount, useWalletClient, useDisconnect, useAccountEffect } from "wagmi";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { useAccount, useAccountEffect } from "wagmi";
 // images
 import { FaCircle } from "react-icons/fa";
-// types
-import { NavLink } from "@/app/page";
+import { PiX, PiList } from "react-icons/pi";
 
-const Navbar = ({ navLinks, page, setPage }: { navLinks: NavLink[]; page: string; setPage: any }) => {
-  // state
+export type NavLink = { text: string; route: string };
+export const navLinks: NavLink[] = [
+  {
+    text: "Dashboard",
+    route: "/",
+  },
+  {
+    text: "Vaults",
+    route: "/vaults",
+  },
+];
 
-  // hooks
+export default function Navbar() {
+  const [menuModal, setMenuModal] = useState(false);
+  const pathname = usePathname();
   const { open } = useWeb3Modal();
   const { isConnected, address } = useAccount();
 
@@ -27,25 +38,21 @@ const Navbar = ({ navLinks, page, setPage }: { navLinks: NavLink[]; page: string
   });
 
   return (
-    <div className="px-[8px] sm:px-[16px] w-full sm:h-[64px] flex flex-col items-center py-5 space-y-5 sm:py-0 sm:space-y-0">
-      <div className="w-full h-full flex items-center justify-between">
+    <nav className="w-full flex justify-center">
+      <div className="sectionSize h-[64px] flex items-center justify-between">
         {/*---logo---*/}
-        <Image src="/logo.svg" alt="navLogo" width={0} height={0} className="ml-[2px] mr-[12px] w-[100px] sm:w-[140px]" />
-        {/*--- desktop menu links---*/}
+        <Image src="/logo.svg" alt="navLogo" width={0} height={0} className="ml-[2px] w-[100px] sm:w-[140px]" />
+
+        {/*--- desktop links---*/}
         <div className="hidden sm:flex space-x-4 md:space-x-12">
-          {navLinks.map((i, index) => (
-            <div
-              className={`${
-                i.id == page ? "underline underline-offset-[5px] decoration-[2px]" : ""
-              } text-lg font-semibold text-center cursor-pointer hover:underline underline-offset-[5px] decoration-[2px]`}
-              onClick={() => setPage(i.id)}
-              key={index}
-            >
-              {i.title}
-            </div>
+          {navLinks.map((i) => (
+            <Link key={i.text} href={i.route} className={`${i.text == pathname ? "underlineStatic" : "underlineAni"} text-lg font-semibold text-center cursor-pointer  relative`}>
+              {i.text}
+            </Link>
           ))}
         </div>
-        {/*--- connect button---*/}
+
+        {/*--- button---*/}
         {isConnected ? (
           <button className="buttonSecondary flex items-center" onClick={() => open({ view: "Account" })}>
             <FaCircle className="mr-2 text-green-500 w-[12px] h-[12px]" /> {address?.slice(0, 6)}...{address?.slice(-4)}
@@ -55,22 +62,41 @@ const Navbar = ({ navLinks, page, setPage }: { navLinks: NavLink[]; page: string
             Connect
           </button>
         )}
-      </div>
-      {/*--- mobile menu links---*/}
-      <div className="sm:hidden flex space-x-[60px]">
-        {navLinks.map((i, index) => (
-          <div
-            id={i.id}
-            key={index}
-            className={`text-lg font-semibold text-center cursor-pointer hover:text-blue-500`}
-            onClick={() => setPage(i.id)}
-          >
-            {i.title}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
 
-export default Navbar;
+        {/*--- harmbuger menu ---*/}
+        <PiList
+          size={40}
+          onClick={async () => {
+            setMenuModal(true);
+            document.body.classList.add("halfHideScrollbar");
+          }}
+          className="sm:hidden cursor-pointer"
+        />
+
+        {/*---mobile menu modal---*/}
+        <div
+          className={`${menuModal ? "opacity-100 z-[100]" : "opacity-0 z-[-10] pointer-events-none"} fixed left-0 top-0 w-full h-screen bg-blue1 transition-all duration-[500ms]`}
+        >
+          {/*--- close button ---*/}
+          <div className="pr-[10px] xs:pr-[21px] pt-[10px] transition-all duration-[800ms] w-full flex justify-end cursor-pointer">
+            <PiX
+              size={44}
+              onClick={async () => {
+                setMenuModal(false);
+                document.body.classList.remove("halfHideScrollbar");
+              }}
+            />
+          </div>
+          {/*--- menu contents ---*/}
+          <div className="font-medium text-2xl px-[9%] pt-[6%] pb-[48px] w-full flex flex-col items-start relative space-y-[44px]">
+            {navLinks.map((i) => (
+              <Link key={i.text} href={i.route} className="desktop:hover:underline decoration-[2px] underline-offset-[8px] cursor-pointer">
+                {i.text}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}

@@ -17,16 +17,16 @@ export const metadata = {
 // Create wagmiConfig
 const chains = [arbitrum, polygon, optimism, base] as const;
 export const config = defaultWagmiConfig({
-  chains,
-  projectId,
-  metadata,
-  ssr: true,
+  chains: chains,
+  projectId: projectId,
+  metadata: metadata,
+  ssr: true, // used in layout.tsx, which is ssr
   storage: createStorage({
     storage: cookieStorage,
   }),
   auth: {
     email: false, // default to true
-    socials: ["google"],
+    socials: ["google", "facebook", "apple"],
     showWallets: true, // default to true
     walletFeatures: true, // default to true
   },

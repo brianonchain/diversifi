@@ -7,10 +7,11 @@ import { useConfig, useAccount } from "wagmi";
 import { readContract, writeContract, waitForTransactionReceipt, switchChain } from "wagmi/actions";
 import { parseUnits, formatUnits } from "viem";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
-// components, constants
+// components
 import ErrorModal from "@/app/_components/ErrorModal";
 import TxModal from "@/app/_components/TxModal";
 import { LoadingGray24, LoadingGray40 } from "@/app/_components/LoadingGray";
+// constants
 import { erc20Abi } from "@/constants/abis/erc20Abi";
 import { depositAbi } from "@/constants/abis/depositAbi";
 
@@ -35,8 +36,15 @@ const myChains = [
   { name: "Base", chainId: 8453 },
 ];
 const rangeValues = [0, 25, 50, 75, 100];
+type HistoryObject = {
+  blockTimestamp: string;
+  event: string;
+  amount: string;
+  transactionHash: string;
+  date: string;
+};
 
-const page = () => {
+export default function Vaults() {
   // hooks
   const { chain, isConnected, address } = useAccount();
   const { open } = useWeb3Modal();
@@ -52,6 +60,7 @@ const page = () => {
   const [usdcBalance, setUsdcBalance] = useState<string | undefined>();
   const [usdcAllowance, setUsdcAllowance] = useState<string | undefined>();
   const [vaultBalance, setVaultBalance] = useState<string | undefined>();
+  const [history, setHistory] = useState<HistoryObject[] | undefined>();
   // modal states
   const [errorModal, setErrorModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -63,6 +72,7 @@ const page = () => {
     setSelectedVault(allVaults[chain?.id.toString() ?? "137"][0]);
     if (chain?.id === 137) {
       updateAllBalances();
+      updateHistory();
     }
   }, [chain]);
 
@@ -94,6 +104,27 @@ const page = () => {
       args: [address ?? "0x0"],
     });
     setVaultBalance(formatUnits(vaultBalanceBigInt, 6));
+  };
+
+  const updateHistory = async () => {
+    const res = await fetch("/api/getHistory", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ userAddress: address }),
+    });
+    const { depositEvents, withdrawalEvents } = await res.json();
+    // add event type and date, combine, and sort
+    depositEvents.forEach((obj: any) => {
+      obj.event = "deposit";
+      obj.date = new Date(obj.blockTimestamp * 1000).toLocaleDateString();
+    });
+    withdrawalEvents.forEach((obj: any) => {
+      obj.event = "withdrawal";
+      obj.date = new Date(obj.blockTimestamp * 1000).toLocaleDateString();
+    });
+    const allEvents = depositEvents.concat(withdrawalEvents);
+    allEvents.sort((x: any, y: any) => y.blockTimestamp - x.blockTimestamp);
+    setHistory(allEvents);
   };
 
   const updateAllBalances = async () => {
@@ -171,6 +202,7 @@ const page = () => {
       setErrorModal(true);
     }
     updateAllBalances();
+    setTimeout(updateHistory, 5000);
   };
 
   const withdraw = async () => {
@@ -217,75 +249,80 @@ const page = () => {
       setErrorModal(true);
     }
     updateAllBalances();
+    setTimeout(updateHistory, 5000);
   };
 
   console.log("usdcAllowance", usdcAllowance);
 
+  console.log(history);
   return (
-    <main className="w-full min-h-[540px] lg:h-[calc(100vh-120px)] bgVaults px-[16px] pb-[16px] flex flex-col lg:flex-row space-y-3 lg:space-y-0 lg:space-x-4">
-      {/*---SELECT CHAIN---*/}
-      <div className="cardBg4 lg:w-[13%] h-full flex flex-col items-center p-4 rounded-xl">
-        <div className="font-bold">Select chain</div>
-        <div className="flex lg:block mt-2 xs:mt-4 space-x-1 lg:space-x-0 lg:space-y-[8px]">
-          {myChains.map((i) => (
-            <div
-              id={i.chainId.toString()}
-              key={i.name}
-              onClick={(e) => (isConnected ? switchChain(config, { chainId: Number(e.currentTarget.id) }) : open())}
-              className={`${
-                chain?.id == i.chainId ? "selectGlass" : ""
-              } flex flex-col items-center justify-center hover:selectGlass w-[84px] h-[88px] rounded-lg cursor-pointer`}
-            >
-              <Image src={`/${i.name.toLowerCase()}.svg`} alt={i.name} width={0} height={0} className="w-[50px] h-[40px] xs:w-[50px] xs:h-[50px]" />
-              <div className="mt-0.5 text-xs">{i.name}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-      {/*---SELECT VAULT---*/}
-      <div className="lg:w-[20%] h-full flex flex-col items-center p-4 cardBg4 rounded-xl">
-        <div className="font-bold">Select Vault</div>
-        <div className="mt-4 space-y-4">
-          {chain ? (
-            allVaults[chain.id.toString()].map((i) => (
+    <main className="pb-[24px] w-full flex-1 flex justify-center lg:bgVaults">
+      {/* <div className="sectionSize w-full h-full flex flex-col lg:flex-row gap-[24px]"> */}
+      <div className="sectionSize h-full grid grid-rows-[auto,auto,auto] lg:grid-cols-[auto_152px_1fr] lg:grid-rows-[1fr] gap-[16px]">
+        {/*--- 1 SELECT CHAIN---*/}
+        <div className="px-[12px] py-[24px] xs:p-[16px] cardBg4 rounded-xl flex flex-col items-center">
+          <div className="lg:text-center font-bold">Chains</div>
+          <div className="mt-2 xs:mt-4 grid grid-flow-col lg:grid-flow-row gap-[12px] xs:gap-[24px]">
+            {myChains.map((i) => (
               <div
-                id={i.id}
-                key={i.id}
-                onClick={(e) => {
-                  const vaultIndex = allVaults[chain.id.toString()].findIndex((i) => i.id == e.currentTarget.id);
-                  setSelectedVault(allVaults[chain.id.toString()][vaultIndex]);
-                }}
+                id={i.chainId.toString()}
+                key={i.name}
+                onClick={(e) => (isConnected ? switchChain(config, { chainId: Number(e.currentTarget.id) }) : open())}
                 className={`${
-                  selectedVault.id == i.id ? "selectGlass" : ""
-                } w-[120px] h-[120px] p-4 flex justify-center items-center rounded-xl cursor-pointer hover:selectGlass`}
+                  chain?.id == i.chainId ? "selectGlass" : ""
+                } flex flex-col items-center justify-center hover:selectGlass w-[68px] h-[68px] xs:w-[84px] xs:h-[88px] rounded-lg cursor-pointer`}
               >
-                <div className="text-sm text-center pb-1">{i.title}</div>
+                <Image src={`/${i.name.toLowerCase()}.svg`} alt={i.name} width={0} height={0} className="w-[30px] h-[30px] xs:w-[50px] xs:h-[50px]" />
+                <div className="mt-0.5 text-xs">{i.name}</div>
               </div>
-            ))
-          ) : (
-            <div className="mt-[12px] text text-text2 text-center">
-              Connect wallet to view
-              <br /> available vaults
-            </div>
-          )}
+            ))}
+          </div>
         </div>
-      </div>
-      {/*---VAULT DETAILS & DEPOSIT---*/}
-      <div className="cardBg4 lg:w-[65%] h-full flex flex-col items-center p-4 rounded-xl">
-        {/*--- title ---*/}
-        <div className="font-bold">{selectedVault.title}</div>
-        <div className="flex-1 flex flex-col justify-evenly">
-          {/*---description---*/}
-          <div className="w-[340px] py-4">
-            <p>Test the vault below:</p>
-            <p>1. Select Polygon network (left menu)</p>
-            <p>2. Approve USDC (if needed)</p>
-            <p>3. Deposit native USDC</p>
-            <p>4. Withdraw your USDC</p>
+
+        {/*--- 2 SELECT VAULT---*/}
+        <div className="px-[12px] py-[24px] xs:p-[16px] cardBg4 rounded-xl flex flex-col items-center">
+          <div className="lg:text-center font-bold">Vaults</div>
+          <div className="mt-2 xs:mt-4 grid grid-flow-col lg:grid-flow-row gap-[12px] xs:gap-[24px]">
+            {chain ? (
+              allVaults[chain.id.toString()].map((i) => (
+                <div
+                  id={i.id}
+                  key={i.id}
+                  onClick={(e) => {
+                    const vaultIndex = allVaults[chain.id.toString()].findIndex((i) => i.id == e.currentTarget.id); // findIndex more robust than indexOf
+                    setSelectedVault(allVaults[chain.id.toString()][vaultIndex]);
+                  }}
+                  className={`${
+                    selectedVault.id == i.id ? "selectGlass" : ""
+                  } w-[90px] h-[90px] xs:w-[120px] xs:h-[120px] p-4 flex justify-center items-center rounded-xl cursor-pointer hover:selectGlass`}
+                >
+                  <div className="text-sm text-center pb-1">{i.title}</div>
+                </div>
+              ))
+            ) : (
+              <div className="flex items-center lg:items-start lg:mt-2 h-[90px] xs:h-[120px] text-text2 text-center">Connect wallet to see vaults</div>
+            )}
+          </div>
+        </div>
+
+        {/*--- DESCRIPTION, DEPOSIT, HISOTRY ---*/}
+        <div className="px-[12px] py-[40px] xs:p-[16px] cardBg4 rounded-xl grid grid-cols-[1fr] lg:grid-cols-[2fr_1fr] lg:grid-rows-[1fr_auto] lg:grid-flow-col justify-center justify-items-center gap-[40px] lg:gap-[16px]">
+          {/*--- DESCRIPTION ---*/}
+          <div className="flex flex-col">
+            {/*--- title ---*/}
+            <div className="font-bold text-xl">{selectedVault.title}</div>
+            {/*---description---*/}
+            <div className="flex-1 flex flex-col justify-center w-[224px] text-base leading-normal">
+              <p>Test the vault below:</p>
+              <p>1. Select Polygon (left menu)</p>
+              <p>2. Approve USDC (if needed)</p>
+              <p>3. Deposit native USDC</p>
+              <p>4. Withdraw your USDC</p>
+            </div>
           </div>
 
-          {/*--- deposit ---*/}
-          <div className="w-[340px]">
+          {/*--- DEPOSIT ---*/}
+          <div className="w-full flex flex-col justify-end max-w-[360px]">
             {/*--- darker blue ---*/}
             <div className="flex items-center rounded-t-xl bg-blue-300 bg-opacity-[5%]">
               {["Deposit", "Withdraw"].map((i) => (
@@ -305,24 +342,21 @@ const page = () => {
               ))}
             </div>
             {/*--- lighter blue ---*/}
-            <div className="px-[30px] py-[24px] h-[240px] flex flex-col items-center justify-center rounded-b-xl bg-blue-300 bg-opacity-[10%]">
+            <div className="w-full flex justify-center px-[12px] lg:px-[24px] py-[24px] h-[240px] rounded-b-xl bg-blue-300 bg-opacity-[10%]">
               {isConnected ? (
-                <div>
-                  {(chain?.id == 137 && depositOrWithdraw == "Deposit" && usdcBalance) ||
-                  (chain?.id == 137 && depositOrWithdraw == "Withdraw" && vaultBalance) ? (
-                    <div>
+                <div className="w-full max-[280px]">
+                  {(chain?.id == 137 && depositOrWithdraw == "Deposit" && usdcBalance) || (chain?.id == 137 && depositOrWithdraw == "Withdraw" && vaultBalance) ? (
+                    <div className="w-full">
                       {/*--- info above box ---*/}
                       <div className="px-1 w-full flex justify-between items-center">
                         <div className="text-sm text-slate-400 font-medium">Amount</div>
-                        <div className="text-xs">
-                          Balance: {depositOrWithdraw == "Deposit" ? Number(usdcBalance)?.toFixed(2) : Number(vaultBalance)?.toFixed(2)}
-                        </div>
+                        <div className="text-xs">Balance: {depositOrWithdraw == "Deposit" ? Number(usdcBalance)?.toFixed(2) : Number(vaultBalance)?.toFixed(2)}</div>
                       </div>
                       {/*--- input box ---*/}
-                      <div className="w-full flex items-center rounded-xl bg-blue1 border border-blue3 focus:border-blue4">
+                      <div className="w-full flex items-center justify-between rounded-xl bg-blue1 border border-blue3 focus:border-blue4">
                         <input
                           id="amount"
-                          className="mt-0.5 w-[168px] h-[48px] px-4 bg-transparent outline-none text-xl font-semibold focus:placeholder:text-transparent placeholder:text-slate-400 [&::-webkit-inner-spin-button]:appearance-none"
+                          className="mt-0.5 w-[150px] h-[48px] px-4 bg-transparent outline-none text-xl font-semibold focus:placeholder:text-transparent placeholder:text-slate-400 [&::-webkit-inner-spin-button]:appearance-none"
                           type="number"
                           autoComplete="off"
                           placeholder="0"
@@ -335,23 +369,21 @@ const page = () => {
                             setAmount(e.currentTarget.value);
                           }}
                         ></input>
-                        <div className="w-[120px] flex px-4 space-x-[6px]">
+                        <div className="flex items-center px-[16px] space-x-[6px]">
                           <Image src="/usdc.svg" alt="usdc" width={0} height={0} className="w-[24px]" />
                           <div className="text-xl font-semibold">USDC</div>
                         </div>
                       </div>
                       {/*--- input range ---*/}
                       <input
-                        className="mt-2 w-full h-[6px] appearance-none bg-slate-600 accent-blue4 rounded-full"
+                        className="mt-2 w-full h-[6px] appearance-none bg-slate-600 accent-button1 accent rounded-full shadow-[inset_0px_0px_2px_0px_rgba(0,0,0,0.3)]"
                         type="range"
                         step="0.01"
                         value={amount ? (Number(amount) / Number(depositOrWithdraw == "Deposit" ? usdcBalance : vaultBalance)) * 100 : 0}
-                        onChange={(e) =>
-                          setAmount(((Number(depositOrWithdraw == "Deposit" ? usdcBalance : vaultBalance) * Number(e.currentTarget.value)) / 100).toFixed(2))
-                        }
+                        onChange={(e) => setAmount(((Number(depositOrWithdraw == "Deposit" ? usdcBalance : vaultBalance) * Number(e.currentTarget.value)) / 100).toFixed(2))}
                       ></input>
                       {/*--- range values ---*/}
-                      <div className="mt-1 w-full flex justify-between text-[13px] text-slate-400">
+                      <div className="w-full flex justify-between text-[13px] text-slate-400">
                         {rangeValues.map((i) => (
                           <div
                             key={i}
@@ -367,16 +399,14 @@ const page = () => {
                         ))}
                       </div>
                       {/*--- buttons ---*/}
-                      <button
-                        className="mt-8 buttonPrimary w-full"
-                        onClick={() => (depositOrWithdraw == "Deposit" ? deposit() : withdraw())}
-                        disabled={txState != "initial"}
-                      >
+                      <button className="mt-8 buttonPrimary w-full" onClick={() => (depositOrWithdraw == "Deposit" ? deposit() : withdraw())} disabled={txState != "initial"}>
                         {depositOrWithdraw}
                       </button>
                     </div>
                   ) : (
-                    <LoadingGray40 />
+                    <div className="w-full h-full flex items-center justify-center">
+                      <LoadingGray40 />
+                    </div>
                   )}
                 </div>
               ) : (
@@ -384,24 +414,51 @@ const page = () => {
               )}
             </div>
           </div>
+
+          {/*--- HISTORY ---*/}
+          <div className="lg:row-span-2 w-full max-w-[360px] h-[300px] lg:h-auto lg:max-h-[calc(100vh-64px*2-24px-16px*2-4px)] flex flex-col justify-between border border-slate-600 bg-blue2 bg-opacity-20 rounded-xl overflow-hidden">
+            <div className="pt-3 text-base font-semibold text-center">History</div>
+            <div className="w-full h-[calc(100%-80px)] px-4 overflow-y-auto scrollbar text-xs">
+              <div className="grid grid-cols-3 text-slate-500 underline underline-offset-4 font-medium">
+                <div className="px-2 pb-1">Date</div>
+                <div className="px-2 pb-1 text-right">Deposit</div>
+                <div className="px-2 pb-1 text-right">Withdrawal</div>
+              </div>
+              {history &&
+                history.map((i) => (
+                  <div
+                    className="grid grid-cols-3 hover:bg-blue2 cursor-pointer transition-all duration-300 rounded-md"
+                    onClick={() => window.open(`https://polygonscan.com/tx/${i.transactionHash}`, "_blank")}
+                  >
+                    <div className="p-2">{i.date.toString()}</div>
+                    <div className="p-2 text-right">{i.event == "deposit" ? formatUnits(BigInt(i.amount), 6) : ""}</div>
+                    <div className="p-2 text-right">{i.event == "withdrawal" ? formatUnits(BigInt(i.amount), 6) : ""}</div>
+                  </div>
+                ))}
+            </div>
+            <div className="pb-1 w-full px-4 flex justify-end items-center">
+              <div className="text-xs font-medium text-[#77798F]">powered by</div>
+              <Image src="/thegraph.svg" alt="thegraph" width={0} height={0} className="ml-2 pt-1 w-[80px] opacity-50" />
+            </div>
+          </div>
         </div>
+
+        {errorModal && <ErrorModal setErrorModal={setErrorModal} errorMsg={errorMsg} />}
+
+        {txModal && amount && (
+          <TxModal
+            txState={txState}
+            setTxState={setTxState}
+            setTxModal={setTxModal}
+            amount={amount}
+            setAmount={setAmount}
+            depositOrWithdraw={depositOrWithdraw}
+            isApproveNeeded={isApproveNeeded}
+            selectedVault={selectedVault}
+            txHash={txHash}
+          />
+        )}
       </div>
-      {errorModal && <ErrorModal setErrorModal={setErrorModal} errorMsg={errorMsg} />}
-      {txModal && amount && (
-        <TxModal
-          txState={txState}
-          setTxState={setTxState}
-          setTxModal={setTxModal}
-          amount={amount}
-          setAmount={setAmount}
-          depositOrWithdraw={depositOrWithdraw}
-          isApproveNeeded={isApproveNeeded}
-          selectedVault={selectedVault}
-          txHash={txHash}
-        />
-      )}
     </main>
   );
-};
-
-export default page;
+}
