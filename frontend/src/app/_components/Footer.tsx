@@ -30,8 +30,8 @@ export default function Footer() {
       route: "/about",
     },
     {
-      text: "News",
-      route: "/news",
+      text: "Test",
+      route: "/test",
     },
   ];
 

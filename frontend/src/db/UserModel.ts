@@ -12,7 +12,8 @@ export interface IUser extends Document {
   user: string;
   userVaults: Vault[];
   chartData: any;
-  color: string;
+  vaultIndex: number;
+  todos: string[];
 }
 
 const UserSchema: Schema = new Schema<IUser>({
@@ -27,7 +28,8 @@ const UserSchema: Schema = new Schema<IUser>({
     },
   ],
   chartData: Object,
-  color: String,
+  vaultIndex: Number,
+  todos: [String],
 });
 
 const UserModel = mongoose.models.User || mongoose.model<IUser>("User", UserSchema);

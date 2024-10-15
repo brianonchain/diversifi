@@ -1,4 +1,4 @@
-const ErrorModal = ({ errorMsg, setErrorModal }: { errorMsg: any; setErrorModal: any }) => {
+const ErrorModal = ({ errorMsg, setErrorMsg }: { errorMsg: any; setErrorMsg: any }) => {
   return (
     <div className="absolute z-[200]">
       <div className="errorModal">
@@ -8,7 +8,7 @@ const ErrorModal = ({ errorMsg, setErrorModal }: { errorMsg: any; setErrorModal:
           <div className="errorModalFont py-[16px]">{errorMsg}</div>
           {/*--- button ---*/}
           <div className="modalButtonContainer">
-            <button onClick={() => setErrorModal(false)} className="buttonPrimary sm:max-w-[300px]">
+            <button onClick={() => setErrorMsg("")} className="buttonPrimary sm:max-w-[300px]">
               Close
             </button>
           </div>

@@ -1,33 +1,21 @@
-import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
-import { cookieStorage, createStorage } from "wagmi";
-import { arbitrum, polygon, optimism, base } from "wagmi/chains";
+import { cookieStorage, createStorage, http } from "@wagmi/core";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+import { arbitrum, polygon, optimism, base } from "@reown/appkit/networks";
 
 // Get projectId from https://cloud.walletconnect.com
-export const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
+export const projectId = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID;
 
 if (!projectId) throw new Error("Project ID is not defined");
 
-export const metadata = {
-  name: "DiversiFi",
-  description: "diversified stablecoin yields",
-  url: "diversifi.vercel.app",
-  icons: ["https://avatars.githubusercontent.com/u/37784886"],
-};
+export const networks = [arbitrum, polygon, optimism, base];
 
-// Create wagmiConfig
-const chains = [arbitrum, polygon, optimism, base] as const;
-export const config = defaultWagmiConfig({
-  chains: chains,
-  projectId: projectId,
-  metadata: metadata,
-  ssr: true, // used in layout.tsx, which is ssr
+export const wagmiAdapter = new WagmiAdapter({
   storage: createStorage({
     storage: cookieStorage,
   }),
-  auth: {
-    email: false, // default to true
-    socials: ["google", "facebook", "apple"],
-    showWallets: true, // default to true
-    walletFeatures: true, // default to true
-  },
+  ssr: true,
+  projectId: projectId,
+  networks: networks,
 });
+
+export const config = wagmiAdapter.wagmiConfig;

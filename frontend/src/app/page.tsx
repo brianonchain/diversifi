@@ -1,4 +1,5 @@
 // nextjs
+import { cookies } from "next/headers";
 // components
 import LineChart from "./_components/Chart";
 import SelectVault from "./_components/SelectVault";
@@ -6,36 +7,17 @@ import SelectVault from "./_components/SelectVault";
 import dbConnect from "@/db/dbConnect";
 import UserModel from "@/db/UserModel";
 
-// redux
-import { RootState } from "@/state/store";
-import { store } from "@/state/store";
-
 export default async function Dashboard({ searchParams }: { searchParams?: { vaultIndex: number } }) {
   // make API call to databse
   await dbConnect();
   const doc = await UserModel.findOne({ user: "brianonchain" });
   const userVaults = doc.userVaults;
 
-  // get query params
+  // get state from params
   const selectedVaultIndex = searchParams?.vaultIndex ?? 0;
   const selectedVault = userVaults[selectedVaultIndex];
-
-  // const [selectedVault, setSelectedVaultData] = useState<Vault | undefined>(userVaults[0]);
-
-  // useEffect(() => {
-  //   const observer = new IntersectionObserver(
-  //     (entries) => {
-  //       entries.forEach((entry) => {
-  //         if (entry.isIntersecting) {
-  //           entry.target.classList.remove("opacity-0");
-  //           observer.unobserve(entry.target);
-  //         }
-  //       });
-  //     },
-  //     { rootMargin: "-100px" }
-  //   );
-  //   document.querySelectorAll("div[data-show='yes']").forEach((el) => observer.observe(el));
-  // }, []);
+  // get state from cookies
+  const selectedVaultIndexFromCookies = cookies().get("vaultIndex")?.value;
 
   return (
     <div className="flex-1 w-full flex justify-center">
@@ -68,7 +50,18 @@ export default async function Dashboard({ searchParams }: { searchParams?: { vau
           </div>
           {/*--- list of vaults ---*/}
           <SelectVault userVaultsString={JSON.stringify(userVaults)} />
-          <div>{doc.color}</div>
+          <div className="mt-8 text-xs text-slate-400">
+            <span className="font-bold">Passing state from client to server:</span> This card is a server component, except for the 3 clickable vaults, which is a client component.
+            State from the client can be passed to the server in 3 ways (below), thus allowing the server component to render dynamic data.
+          </div>
+          <div className="mt-2 grid grid-cols-[auto,auto] text-xs text-slate-400">
+            <div>URL params</div>
+            <div>vaultIndex: {selectedVaultIndex}</div>
+            <div>cookies</div>
+            <div>vaultIndex: {selectedVaultIndexFromCookies}</div>
+            <div>external database</div>
+            <div>vaultIndex: {doc.vaultIndex}</div>
+          </div>
         </div>
         {/*--- PERFORMANCE ---*/}
         <div className="px-6 py-4 w-full h-full rounded-xl flex flex-col items-center cardBg2 space-y-[12px]">

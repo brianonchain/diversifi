@@ -1,14 +1,15 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 // wagmi
-import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { useAppKit } from "@reown/appkit/react";
 import { useAccount, useAccountEffect } from "wagmi";
 // images
 import { FaCircle } from "react-icons/fa";
 import { PiX, PiList } from "react-icons/pi";
+import { Router } from "next/router";
 
 export type NavLink = { text: string; route: string };
 export const navLinks: NavLink[] = [
@@ -25,7 +26,8 @@ export const navLinks: NavLink[] = [
 export default function Navbar() {
   const [menuModal, setMenuModal] = useState(false);
   const pathname = usePathname();
-  const { open } = useWeb3Modal();
+  const router = useRouter();
+  const { open, close } = useAppKit();
   const { isConnected, address } = useAccount();
 
   useAccountEffect({
@@ -90,9 +92,16 @@ export default function Navbar() {
           {/*--- menu contents ---*/}
           <div className="font-medium text-2xl px-[9%] pt-[6%] pb-[48px] w-full flex flex-col items-start relative space-y-[44px]">
             {navLinks.map((i) => (
-              <Link key={i.text} href={i.route} className="desktop:hover:underline decoration-[2px] underline-offset-[8px] cursor-pointer">
+              <div
+                key={i.text}
+                onClick={() => {
+                  router.push(i.route);
+                  setMenuModal(false);
+                }}
+                className="desktop:hover:underline decoration-[2px] underline-offset-[8px] cursor-pointer"
+              >
                 {i.text}
-              </Link>
+              </div>
             ))}
           </div>
         </div>

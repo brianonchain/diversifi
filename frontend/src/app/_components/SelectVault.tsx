@@ -3,8 +3,9 @@ import { useState } from "react";
 import { Vault } from "@/db/UserModel";
 import { revalidatePath } from "next/cache";
 import { useRouter, useSearchParams } from "next/navigation";
+import { setCookie } from "cookies-next";
 // actions
-import { changeColor } from "@/actions/actions";
+import { changeSelectedVaultIndex } from "@/actions/actions";
 // redux
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/state/store";
@@ -22,9 +23,6 @@ export default function SelectVault({ userVaultsString }: { userVaultsString: st
 
   const router = useRouter();
   const vaultIndex = searchParams.get("vaultIndex");
-  console.log("client vaultIndex", vaultIndex);
-
-  const colors = ["red", "green", "orange"];
 
   // zustand
   const counter = useCounterStore((state) => state.count);
@@ -33,17 +31,18 @@ export default function SelectVault({ userVaultsString }: { userVaultsString: st
 
   return (
     <div className="mt-10 mb-10 lg:mb-0 border border-slate-500 rounded-xl overflow-hidden">
-      <div>count:{counter}</div>
-      <div>selectedVault:{selectedVaultIndex}</div>
+      {/* <div>count:{counter}</div> */}
+      {/* <div>selectedVault:{selectedVaultIndex}</div> */}
       {userVaults.map((i, index) => (
         <div
           id={i.id}
           key={index}
           onClick={async () => {
             dispatch(selectVault(index));
-            await changeColor(colors[index]);
+            await changeSelectedVaultIndex(index);
             router.push(`/?vaultIndex=${index}`);
             increment();
+            setCookie("vaultIndex", index);
           }}
           className={`${selectedVaultIndex === index ? "bg-button1" : ""} ${
             index === userVaults.length - 1 ? "" : "border-b"

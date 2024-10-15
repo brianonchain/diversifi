@@ -24,7 +24,7 @@ export const POST = async (req: Request) => {
   const url = "https://api.studio.thegraph.com/query/88146/depositcontract/version/latest";
 
   try {
-    const data = (await request(url, query, vars)) as any;
+    const data = (await request({ url: url, document: query, variables: vars })) as any;
     return Response.json(data);
   } catch (e) {
     return Response.json("error");

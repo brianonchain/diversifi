@@ -3,10 +3,10 @@ import dbConnect from "@/db/dbConnect";
 import UserModel from "@/db/UserModel";
 import { revalidatePath } from "next/cache";
 
-export async function changeColor(color: string) {
+export async function changeSelectedVaultIndex(vaultIndex: number) {
   // some authenticating logic
   await dbConnect();
-  await UserModel.findOneAndUpdate({ user: "brianonchain" }, { color: color });
+  await UserModel.findOneAndUpdate({ user: "brianonchain" }, { vaultIndex: vaultIndex });
 
   revalidatePath("/");
 }

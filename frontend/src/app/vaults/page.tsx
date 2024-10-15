@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 // wagmi & viem
-import { useConfig, useAccount } from "wagmi";
+import { useConfig, useAccount, useReadContracts } from "wagmi";
 import { readContract, writeContract, waitForTransactionReceipt, switchChain } from "wagmi/actions";
 import { parseUnits, formatUnits } from "viem";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { useAppKit } from "@reown/appkit/react";
+// react query
+import { useQuery } from "@tanstack/react-query";
 // components
 import ErrorModal from "@/app/_components/ErrorModal";
 import TxModal from "@/app/_components/TxModal";
@@ -48,7 +50,7 @@ type HistoryObject = {
 export default function Vaults() {
   // hooks
   const { chain, isConnected, address } = useAccount();
-  const { open } = useWeb3Modal();
+  const { open } = useAppKit();
   const config = useConfig();
 
   //state
@@ -57,55 +59,75 @@ export default function Vaults() {
   const [isApproveNeeded, setIsApproveNeeded] = useState(false);
   const [txState, setTxState] = useState("initial"); // initial | approve | approving | deposit | depositing | withdraw | withdrawing | final
   const [txHash, setTxHash] = useState("0x0");
-  // balances
-  const [usdcBalance, setUsdcBalance] = useState<string | undefined>();
-  const [usdcAllowance, setUsdcAllowance] = useState<string | undefined>();
-  const [vaultBalance, setVaultBalance] = useState<string | undefined>();
   const [history, setHistory] = useState<HistoryObject[] | undefined>();
   // modal states
-  const [errorModal, setErrorModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [txModal, setTxModal] = useState(false);
   const [depositOrWithdraw, setDepositOrWithdraw] = useState("Deposit");
+
+  const getBalancesQuery = useReadContracts({
+    contracts: [
+      {
+        address: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        abi: erc20Abi,
+        functionName: "balanceOf",
+        args: [address ?? "0x0"],
+      },
+      {
+        address: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        abi: erc20Abi,
+        functionName: "allowance",
+        args: [address ?? "0x0", "0x599559Ed394ADd1117ab72667e49d1560A2124E0"],
+      },
+      {
+        address: "0x599559Ed394ADd1117ab72667e49d1560A2124E0",
+        abi: depositAbi,
+        functionName: "getBalance",
+        args: [address ?? "0x0"],
+      },
+    ],
+  });
+  const [usdcBalance, usdcAllowance, vaultBalance] = getBalancesQuery.data?.map((i) => (i.result != null ? formatUnits(i.result, 6) : undefined)) || [];
+  console.log("usdcBalance", usdcBalance);
+  console.log("usdcAllowance", usdcAllowance);
+  console.log("vaultBalance", vaultBalance);
 
   // set selected vault when new chain is detected, use useEffect instead of onSuccess callback because user switching chain on Web3Modal or MetaMask will not be detected by onSuccess
   useEffect(() => {
     setSelectedVault(allVaults[chain?.id.toString() ?? "137"][0]);
     if (chain?.id === 137) {
-      updateAllBalances();
+      // updateAllBalances();
       updateHistory();
     }
   }, [chain]);
 
-  const updateUsdcBalance = async () => {
-    const usdcBalanceBigInt = await readContract(config, {
-      address: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
-      abi: erc20Abi,
-      functionName: "balanceOf",
-      args: [address ?? "0x0"],
-    });
-    setUsdcBalance(formatUnits(usdcBalanceBigInt, 6));
-  };
-
-  const updateUsdcAllowance = async () => {
-    const usdcAllowanceBigInt = await readContract(config, {
-      address: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
-      abi: erc20Abi,
-      functionName: "allowance",
-      args: [address ?? "0x0", "0x599559Ed394ADd1117ab72667e49d1560A2124E0"],
-    });
-    setUsdcAllowance(formatUnits(usdcAllowanceBigInt, 6));
-  };
-
-  const updateVaultBalance = async () => {
-    const vaultBalanceBigInt = await readContract(config, {
-      address: "0x599559Ed394ADd1117ab72667e49d1560A2124E0",
-      abi: depositAbi,
-      functionName: "getBalance",
-      args: [address ?? "0x0"],
-    });
-    setVaultBalance(formatUnits(vaultBalanceBigInt, 6));
-  };
+  // const historyQuery = useQuery({
+  //   queryKey: ["history", address],
+  //   queryFn: async () => {
+  //     const res = await fetch("/api/getHistory", {
+  //       method: "POST",
+  //       headers: { "content-type": "application/json" },
+  //       body: JSON.stringify({ userAddress: address }),
+  //     });
+  //     const { depositEvents, withdrawalEvents } = await res.json();
+  //     // add event type and date, combine, and sort
+  //     depositEvents.forEach((obj: any) => {
+  //       obj.event = "deposit";
+  //       obj.date = new Date(obj.blockTimestamp * 1000).toLocaleDateString();
+  //     });
+  //     withdrawalEvents.forEach((obj: any) => {
+  //       obj.event = "withdrawal";
+  //       obj.date = new Date(obj.blockTimestamp * 1000).toLocaleDateString();
+  //     });
+  //     const allEvents = depositEvents.concat(withdrawalEvents);
+  //     allEvents.sort((x: any, y: any) => y.blockTimestamp - x.blockTimestamp);
+  //     return allEvents;
+  //   },
+  //   refetchOnWindowFocus: false,
+  //   staleTime: Infinity,
+  //   gcTime: Infinity,
+  // });
+  // console.log("historyQuery.data", historyQuery.data);
 
   const updateHistory = async () => {
     const res = await fetch("/api/getHistory", {
@@ -127,35 +149,26 @@ export default function Vaults() {
     allEvents.sort((x: any, y: any) => y.blockTimestamp - x.blockTimestamp);
     setHistory(allEvents);
   };
-
-  const updateAllBalances = async () => {
-    updateUsdcBalance();
-    updateVaultBalance();
-    updateUsdcAllowance();
-  };
+  console.log("history", history);
 
   const deposit = async () => {
     if (!usdcAllowance) {
       setErrorMsg("Please refresh page and try again");
-      setErrorModal(true);
     }
 
     if (!amount || Number(amount) <= 0) {
       setErrorMsg("Please enter an amount");
-      setErrorModal(true);
       return;
     }
 
     if (Number(amount) > Number(usdcBalance)) {
       setErrorMsg("Amount exceeds balance");
-      setErrorModal(true);
       return;
     }
 
     // determine isApproveNeeded
     const isApproveNeededTemp = Number(amount) > Number(usdcAllowance);
     setIsApproveNeeded(isApproveNeededTemp);
-    console.log("isApproveNeededTemp", isApproveNeededTemp);
 
     setTxModal(true);
 
@@ -200,28 +213,24 @@ export default function Vaults() {
       setTxModal(false);
       // set error
       setErrorMsg("Deposit was unsuccessful. Please try again.");
-      setErrorModal(true);
     }
-    updateAllBalances();
+    // updateAllBalances();
     setTimeout(updateHistory, 5000);
   };
 
   const withdraw = async () => {
     if (!vaultBalance) {
       setErrorMsg("Please refresh page and try again");
-      setErrorModal(true);
       return;
     }
 
     if (!amount || Number(amount) <= 0) {
       setErrorMsg("Please enter an amount");
-      setErrorModal(true);
       return;
     }
 
     if (Number(amount) > Number(vaultBalance)) {
       setErrorMsg("Amount exceeds balance");
-      setErrorModal(true);
       return;
     }
 
@@ -247,15 +256,11 @@ export default function Vaults() {
       setTxModal(false);
       // set error
       setErrorMsg("Withdrawal was unsuccessful. Please try again.");
-      setErrorModal(true);
     }
-    updateAllBalances();
+    // updateAllBalances();
     setTimeout(updateHistory, 5000);
   };
 
-  console.log("usdcAllowance", usdcAllowance);
-
-  console.log(history);
   return (
     <main className="pb-[24px] w-full flex-1 flex justify-center lg:bgVaults">
       {/* <div className="sectionSize w-full h-full flex flex-col lg:flex-row gap-[24px]"> */}
@@ -419,23 +424,29 @@ export default function Vaults() {
           {/*--- HISTORY ---*/}
           <div className="lg:row-span-2 w-full max-w-[360px] h-[300px] lg:h-auto lg:max-h-[calc(100vh-64px*2-24px-16px*2-4px)] flex flex-col justify-between border border-slate-600 bg-blue2 bg-opacity-20 rounded-xl overflow-hidden">
             <div className="pt-3 text-base font-semibold text-center">History</div>
-            <div className="w-full h-[calc(100%-80px)] px-4 overflow-y-auto scrollbar text-xs">
+            <div className="w-full h-[calc(100%-80px)] px-4 flex flex-col overflow-y-auto scrollbar text-xs">
               <div className="grid grid-cols-3 text-slate-500 underline underline-offset-4 font-medium">
                 <div className="px-2 pb-1">Date</div>
                 <div className="px-2 pb-1 text-right">Deposit</div>
                 <div className="px-2 pb-1 text-right">Withdrawal</div>
               </div>
-              {history &&
-                history.map((i) => (
-                  <div
-                    className="grid grid-cols-3 hover:bg-blue2 cursor-pointer transition-all duration-300 rounded-md"
-                    onClick={() => window.open(`https://polygonscan.com/tx/${i.transactionHash}`, "_blank")}
-                  >
-                    <div className="p-2">{i.date.toString()}</div>
-                    <div className="p-2 text-right">{i.event == "deposit" ? formatUnits(BigInt(i.amount), 6) : ""}</div>
-                    <div className="p-2 text-right">{i.event == "withdrawal" ? formatUnits(BigInt(i.amount), 6) : ""}</div>
-                  </div>
-                ))}
+              {!history ? (
+                <div className="flex-1 flex items-center justify-center">Loading...</div>
+              ) : (
+                <div>
+                  {history.map((i: any) => (
+                    <div
+                      key={i.transactionHash}
+                      className="grid grid-cols-3 hover:bg-blue2 cursor-pointer transition-all duration-300 rounded-md"
+                      onClick={() => window.open(`https://polygonscan.com/tx/${i.transactionHash}`, "_blank")}
+                    >
+                      <div className="p-2">{i.date.toString()}</div>
+                      <div className="p-2 text-right">{i.event == "deposit" ? formatUnits(BigInt(i.amount), 6) : ""}</div>
+                      <div className="p-2 text-right">{i.event == "withdrawal" ? formatUnits(BigInt(i.amount), 6) : ""}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="pb-1 w-full px-4 flex justify-end items-center">
               <div className="text-xs font-medium text-[#77798F]">powered by</div>
@@ -444,7 +455,7 @@ export default function Vaults() {
           </div>
         </div>
 
-        {errorModal && <ErrorModal setErrorModal={setErrorModal} errorMsg={errorMsg} />}
+        {errorMsg && <ErrorModal setErrorMsg={setErrorMsg} errorMsg={errorMsg} />}
 
         {txModal && amount && (
           <TxModal
