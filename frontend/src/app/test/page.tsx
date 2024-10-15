@@ -29,8 +29,9 @@ export default function Test() {
   const todosQuery = useQuery({
     queryFn: () =>
       fetch("/api/getTodos", {
-        method: "GET",
+        method: "POST",
         headers: { "content-type": "application/json" },
+        body: JSON.stringify({ user: "brianonchain" }),
       }).then((res) => res.json()),
     queryKey: ["todos"],
   });

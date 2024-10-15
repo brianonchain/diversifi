@@ -1,18 +1,16 @@
-import { NextResponse, NextRequest } from "next/server";
 import dbConnect from "@/db/dbConnect";
 import UserModel from "@/db/UserModel";
 
-export async function GET(request: NextRequest) {
+export async function POST(req: Request) {
   console.log("entered getTodos");
+  const { user } = await req.json();
   await dbConnect();
 
   try {
-    const data = await UserModel.findOne({ user: "brianonchain" }, "todos");
-    return NextResponse.json(data.todos);
+    const data = await UserModel.findOne({ user: user }, "todos");
+    return Response.json(data.todos);
   } catch (e) {
     console.log(e);
-    return NextResponse.json({ error: { message: e } });
+    return Response.json("error");
   }
 }
-
-export const dynamic = "force-dynamic";
