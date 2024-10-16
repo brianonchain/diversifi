@@ -56,7 +56,7 @@ export default function Navbar() {
 
         {/*--- button---*/}
         {isConnected ? (
-          <button className="buttonSecondary flex items-center" onClick={() => open({ view: "Account" })}>
+          <button className="buttonSecondary px-[16px] flex items-center" onClick={() => open({ view: "Account" })}>
             <FaCircle className="mr-2 text-green-500 w-[12px] h-[12px]" /> {address?.slice(0, 6)}...{address?.slice(-4)}
           </button>
         ) : (

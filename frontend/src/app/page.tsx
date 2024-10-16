@@ -14,10 +14,11 @@ export default async function Dashboard({ searchParams }: { searchParams?: { vau
   const userVaults = doc.userVaults;
 
   // get state from params
-  const selectedVaultIndex = searchParams?.vaultIndex ?? 0;
-  const selectedVault = userVaults[selectedVaultIndex];
+  const selectedVaultIndexFromSearchParams = searchParams?.vaultIndex ?? 0;
   // get state from cookies
-  const selectedVaultIndexFromCookies = cookies().get("vaultIndex")?.value;
+  const selectedVaultIndex = cookies().get("vaultIndex")?.value ?? 0;
+
+  const selectedVault = userVaults[selectedVaultIndex];
 
   return (
     <div className="flex-1 w-full flex justify-center">
@@ -56,9 +57,9 @@ export default async function Dashboard({ searchParams }: { searchParams?: { vau
           </div>
           <div className="mt-2 grid grid-cols-[auto,auto] text-xs text-slate-400">
             <div>URL params</div>
-            <div>vaultIndex: {selectedVaultIndex}</div>
+            <div>vaultIndex: {selectedVaultIndexFromSearchParams}</div>
             <div>cookies</div>
-            <div>vaultIndex: {selectedVaultIndexFromCookies}</div>
+            <div>vaultIndex: {selectedVaultIndex}</div>
             <div>external database</div>
             <div>vaultIndex: {doc.vaultIndex}</div>
           </div>

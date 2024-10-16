@@ -18,9 +18,9 @@ const queryClient = new QueryClient();
 // reown
 export const metadata = {
   name: "DiversiFi",
-  description: "diversified stablecoin yields",
-  url: "diversifi.vercel.app",
-  icons: ["https://avatars.githubusercontent.com/u/37784886"],
+  description: "Earn diversified yield (test app)",
+  url: "https://diversifi.vercel.app",
+  icons: ["/icon-svg.svg"],
 };
 
 if (!projectId) throw new Error("Project ID is not defined");

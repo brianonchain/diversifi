@@ -36,9 +36,9 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="w-full flex justify-center">
-      <div className="sectionSize h-[64px] flex items-center justify-between">
-        <div className="ml-[2px] text-sm text-slate-400">&copy; 2024 DiversiFi</div>
+    <footer className="w-full h-[48px] flex-none flex justify-center">
+      <div className="sectionSize flex items-center justify-between">
+        <div className="text-sm text-slate-400">&copy; 2024 DiversiFi</div>
         <div className="flex items-center space-x-[24px]">
           {footerLinks.map((i) => (
             <Link key={i.text} href={i.route} className="text-sm font-medium hover:text-blue-500 cursor-pointer">
@@ -47,7 +47,7 @@ export default function Footer() {
           ))}
           {socials.map((i) => (
             <Link key={i.id} href={i.link} target="_blank">
-              <FontAwesomeIcon icon={i.fa} className="text-xl pt-1 hover:text-blue-500 cursor-pointer" />
+              <FontAwesomeIcon icon={i.fa} className="text-lg pt-1 hover:text-blue-500 cursor-pointer" />
             </Link>
           ))}
         </div>

@@ -81,6 +81,10 @@
     width: 17px;
     height: 20px;
   }
+
+  .buttonHeight {
+    @apply h-[52px] lg:h-[40px];
+  }
 }
 
 @layer components {
@@ -92,15 +96,15 @@
   }
 
   .buttonPrimary {
-    @apply text-base font-semibold px-6 py-2 rounded-lg bg-button1 text-white hover:brightness-[1.3] active:brightness-[1.3] transition-all duration-300;
+    @apply buttonHeight px-[16px] text-base font-semibold rounded-lg bg-button1 text-white hover:brightness-[1.3] active:brightness-[1.3] transition-all duration-300;
   }
 
   .buttonDisabled {
-    @apply text-base font-semibold px-6 py-2 rounded-lg bg-slate-500 text-white cursor-default;
+    @apply buttonHeight text-base font-semibold rounded-lg bg-slate-500 text-white cursor-default;
   }
 
   .buttonSecondary {
-    @apply text-base font-medium px-4 py-2 rounded-lg border border-[#253680] hover:brightness-[1.3] active:brightness-[1.3] text-white;
+    @apply buttonHeight text-base font-medium rounded-lg border border-[#253680] hover:brightness-[1.3] active:brightness-[1.3] text-white;
   }
 
   .modalBase {
