@@ -2,13 +2,15 @@ import { NextResponse, NextRequest } from "next/server";
 import dbConnect from "@/db/dbConnect";
 import UserModel from "@/db/UserModel";
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
+  const { address } = await req.json();
+
   await dbConnect();
 
   try {
     const doc = await UserModel.findOne({ user: "brianonchain" });
-    return NextResponse.json({ data: doc });
+    return NextResponse.json(doc);
   } catch {
-    return NextResponse.json({ error: { message: "failed to get user doc" } });
+    return NextResponse.json("failed to get doc");
   }
 }

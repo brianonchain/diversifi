@@ -2,18 +2,44 @@
 // wagmi
 import { wagmiAdapter, projectId } from "@/config/wagmiConfig";
 import { cookieToInitialState, WagmiProvider, type Config } from "wagmi";
-// reown
 import { createAppKit } from "@reown/appkit/react";
 import { arbitrum, polygon, optimism, base } from "@reown/appkit/networks";
 // react query
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { isServer, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 //redux
 import { Provider } from "react-redux";
 import { store } from "@/state/store";
 
-// queryClient
-const queryClient = new QueryClient();
+// Set up queryClient
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000, // With SSR, we usually want to set some default staleTime above 0 to avoid refetching immediately on the client
+      },
+    },
+  });
+}
+
+let browserQueryClient: QueryClient | undefined = undefined;
+
+function getQueryClient() {
+  const date = new Date();
+  const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
+  if (isServer) {
+    console.log("server queryClient created", time);
+    return makeQueryClient(); // Server: always make a new query client
+  } else {
+    if (!browserQueryClient) {
+      browserQueryClient = makeQueryClient(); // Browser: make a new query client if we don't already have one. This is very important, so we don't re-make a new client if React suspends during the initial render. This may not be needed if we have a suspense boundary BELOW the creation of the query client
+      console.log("browser queryClient created");
+    } else {
+      console.log("browser queryClient already exists");
+    }
+    return browserQueryClient;
+  }
+}
 
 // reown
 export const metadata = {
@@ -41,8 +67,13 @@ const modal = createAppKit({
   themeMode: "light",
 });
 
-export default function ContextProvider({ children, cookies }: { children: React.ReactNode; cookies: string | null }) {
+export default function Providers({ children, cookies }: { children: React.ReactNode; cookies: string | null }) {
+  const date = new Date();
+  const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
+  console.log("Providers.tsx", time);
+
   const initialState = cookieToInitialState(wagmiAdapter.wagmiConfig as Config, cookies);
+  const queryClient = getQueryClient();
 
   return (
     <WagmiProvider config={wagmiAdapter.wagmiConfig as Config} initialState={initialState}>

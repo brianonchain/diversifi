@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import counterReducer from "./counterSlice";
-import selectVaultReducer from "./selectVaultSlice";
+import selectVaultReducer from "./vaultIndexSlice";
 
 export const store = configureStore({
-  reducer: { counter: counterReducer, selectedVaultIndex: selectVaultReducer },
+  reducer: { counter: counterReducer, vaultIndex: selectVaultReducer },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -1,79 +1,85 @@
 // nextjs
+import { Suspense } from "react";
+import Image from "next/image";
 import { cookies } from "next/headers";
 // components
-import LineChart from "./_components/Chart";
-import SelectVault from "./_components/SelectVault";
-// db
-import dbConnect from "@/db/dbConnect";
-import UserModel from "@/db/UserModel";
+import SelectChain from "./_components/SelectChain";
+import Deposit from "./_components/Deposit";
+import HistoryClient from "./_components/HistoryClient";
+import VaultDetails from "./_components/VaultDetails";
+import SelectVaultServer from "./_components/SelectVaultServer";
+import DetectUserAddress from "./_components/DetectUserAddress";
+import ErrorModal from "./_components/ErrorModal";
+// utils
+import { LoadingGray24, LoadingGray40 } from "@/utils/components/LoadingGray";
 
-export default async function Dashboard({ searchParams }: { searchParams?: { vaultIndex: number } }) {
-  // make API call to databse
-  await dbConnect();
-  const doc = await UserModel.findOne({ user: "brianonchain" });
-  const userVaults = doc.userVaults;
+export default async function Vaults({ searchParams }: { searchParams: Promise<{ vault: string }> }) {
+  const date = new Date();
+  const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
 
-  // get state from params
-  const selectedVaultIndexFromSearchParams = searchParams?.vaultIndex ?? 0;
-  // get state from cookies
-  const selectedVaultIndex = cookies().get("vaultIndex")?.value ?? 0;
+  // get states from search params
+  const vaultId = (await searchParams)?.vault ?? "Polygon_Stablecoin_Vault";
 
-  const selectedVault = userVaults[selectedVaultIndex];
+  // get states from cookies
+  const userAddressFromCookies = (await cookies()).get("userAddress")?.value;
+
+  console.log("page.tsx", time, "vaultId:", vaultId, "userAddressFromCookies:", userAddressFromCookies);
 
   return (
-    <div className="flex-1 w-full flex justify-center">
-      <div className="sectionSize h-full grid grid-rows-[repeat(3,600px)] lg:grid-cols-[1fr_2fr] lg:grid-rows-[1fr_1fr] gap-[24px]">
-        {/*---LEFT CARD---*/}
-        <div className="lg:row-span-2 cardBg h-full px-[24px] rounded-xl">
-          {/*--- vault stats ---*/}
-          <div className="mt-5">
-            {/*---title---*/}
-            <div className="text-xl font-bold text-center bg-">{selectedVault ? selectedVault.title : "All Vaults"}</div>
-            {/*---total---*/}
-            <div className="mt-4 flex justify-center text-3xl font-bold">
-              {selectedVault ? `$${Number((selectedVault.principal + selectedVault.earned).toFixed(2)).toLocaleString()}` : <div className="skeleton">00000000</div>}
-            </div>
-            {/*---details---*/}
-            <div className="mt-4 px-1 flex justify-between">
-              <div className="flex flex-col">
-                <div className="text-xs font-medium text-text2">PRINCIPAL</div>
-                <div>{selectedVault ? `$${Number(selectedVault.principal.toFixed(2)).toLocaleString()}` : <span className="skeleton">00000000</span>}</div>
+    <main className="w-full grow lg:min-h-0 flex justify-center lg:bgVaults">
+      <DetectUserAddress />
+      <ErrorModal />
+      <div className="pb-[16px] sectionSize h-full grid grid-rows-[auto,auto,auto] lg:grid-cols-[auto_152px_1fr] lg:grid-rows-[1fr] gap-[16px]">
+        <SelectChain vaultId={vaultId} />
+        <div className="px-[12px] py-[24px] xs:p-[16px] cardBg4 rounded-xl flex flex-col items-center">
+          <Suspense
+            fallback={
+              <div className="grow flex items-center justify-center">
+                <LoadingGray40 />
               </div>
-              <div className="flex flex-col">
-                <div className="text-xs font-medium text-text2">EARNED</div>
-                <div>{selectedVault ? `$${Number(selectedVault.earned.toFixed(2)).toLocaleString()}` : <span className="skeleton">00000000</span>}</div>
-              </div>
-              <div className="flex flex-col">
-                <div className="text-xs font-medium text-text2">PERFORMANCE</div>
-                <div>{selectedVault ? `${Number(selectedVault.performance.toFixed(1))}%` : <span className="skeleton">0000</span>}</div>
-              </div>
-            </div>
+            }
+          >
+            <SelectVaultServer vaultId={vaultId} />
+          </Suspense>
+        </div>
+
+        {/*--- DESCRIPTION, DEPOSIT, HISOTRY ---*/}
+        <div className="grid grid-cols-[1fr] grid-rows-[auto_360px_360px] lg:grid-cols-[1fr_300px] lg:grid-rows-[270px_1fr] justify-items-center cardBg4 rounded-xl overflow-hidden bg-red-300">
+          {/*--- DESCRIPTION ---*/}
+          <div className="py-[40px] lg:py-0 lg:row-span-2 w-full flex flex-col items-center border-b lg:border-r border-slate-600">
+            <Suspense
+              fallback={
+                <div className="grow flex items-center justify-center">
+                  <LoadingGray40 />
+                </div>
+              }
+              key={vaultId}
+            >
+              <VaultDetails vaultId={vaultId} />
+            </Suspense>
           </div>
-          {/*--- list of vaults ---*/}
-          <SelectVault userVaultsString={JSON.stringify(userVaults)} />
-          <div className="mt-8 text-xs text-slate-400">
-            <span className="font-bold">Passing state from client to server:</span> This card is a server component, except for the 3 clickable vaults, which is a client component.
-            State from the client can be passed to the server in 3 ways (below), thus allowing the server component to render dynamic data.
+
+          {/*--- DEPOSIT ---*/}
+          <div className="py-[40px] lg:py-0 w-full h-full flex flex-col items-center border-b border-slate-600">
+            <Deposit vaultId={vaultId} />
           </div>
-          <div className="mt-2 grid grid-cols-[auto,auto] text-xs text-slate-400">
-            <div>URL params</div>
-            <div>vaultIndex: {selectedVaultIndexFromSearchParams}</div>
-            <div>cookies</div>
-            <div>vaultIndex: {selectedVaultIndex}</div>
-            <div>external database</div>
-            <div>vaultIndex: {doc.vaultIndex}</div>
+
+          {/*--- HISTORY ---*/}
+          <div className="py-[40px] lg:py-0 lg:!pt-[12px] w-[300px] lg:w-full flex flex-col items-center text-xs lg:min-h-0">
+            <div className="text-sm font-semibold">History</div>
+            <div className="pt-[8px] pb-[4px] px-[16px] w-full grid grid-cols-3 gap-2 text-slate-500 underline underline-offset-4 font-medium">
+              <div className="">Date</div>
+              <div className="text-right">Deposit</div>
+              <div className="text-right">Withdrawal</div>
+            </div>
+            {userAddressFromCookies ? <HistoryClient userAddressFromCookies={userAddressFromCookies} vaultId={vaultId} /> : <div className="grow"></div>}
+            <div className="pt-[8px] lg:pt-0 pb-1 w-full lg:px-4 flex justify-end items-center">
+              <div className="text-xs font-medium text-[#77798F]">powered by</div>
+              <Image src="/thegraph.svg" alt="thegraph" width={0} height={0} className="ml-2 pt-1 w-[80px] opacity-50" />
+            </div>
           </div>
         </div>
-        {/*--- PERFORMANCE ---*/}
-        <div className="px-6 py-4 w-full h-full rounded-xl flex flex-col items-center cardBg2 space-y-[12px]">
-          <div className="w-full font-medium">Performance: {selectedVault?.title ?? ""}</div>
-          <div data-show="yes" className="w-[90%] h-[95%] flex justify-center items-center relative">
-            {selectedVault && <LineChart selectedVaultString={JSON.stringify(selectedVault)} selectedChartDataString={JSON.stringify(doc.chartData[selectedVault.id])} />}
-          </div>
-        </div>
-        {/*--- DETAILS ---*/}
-        <div className="p-4 w-full h-full border-2 border-blue2 rounded-xl">Vault Details</div>
       </div>
-    </div>
+    </main>
   );
 }

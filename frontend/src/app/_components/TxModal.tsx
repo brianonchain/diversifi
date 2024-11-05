@@ -2,11 +2,11 @@
 import Link from "next/link";
 // images
 import { FaCheck } from "react-icons/fa";
-import { LoadingGray32 } from "@/app/_components/LoadingGray";
+import { LoadingGray32 } from "@/utils/components/LoadingGray";
 import { PiHandDepositLight, PiHandWithdrawLight } from "react-icons/pi";
 import { LuExternalLink } from "react-icons/lu";
 // types
-import { VaultInfo } from "@/app/vaults/page";
+import { VaultInfo } from "@/utils/constants";
 
 const TxModal = ({
   txState,
@@ -16,7 +16,7 @@ const TxModal = ({
   setAmount,
   depositOrWithdraw,
   isApproveNeeded,
-  selectedVault,
+  vaultId,
   txHash,
 }: {
   txState: string;
@@ -26,7 +26,7 @@ const TxModal = ({
   setAmount: any;
   depositOrWithdraw: string;
   isApproveNeeded: boolean;
-  selectedVault: VaultInfo;
+  vaultId: string;
   txHash: string;
 }) => {
   return (
@@ -38,7 +38,7 @@ const TxModal = ({
           <div className="text-center font-medium text-xl leading-relaxed">
             {depositOrWithdraw == "Deposit" ? "Depositing" : "Withdrawing"} <span className="font-bold">{amount} USDC</span>
             <br />
-            {depositOrWithdraw == "Deposit" ? "to" : "from"} {selectedVault.title}
+            {depositOrWithdraw == "Deposit" ? "to" : "from"} {vaultId.replaceAll("_", " ")}
           </div>
           {/*--- 3 cases ---*/}
           {depositOrWithdraw == "Deposit" && isApproveNeeded && (

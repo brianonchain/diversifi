@@ -14,16 +14,17 @@ import { Router } from "next/router";
 export type NavLink = { text: string; route: string };
 export const navLinks: NavLink[] = [
   {
-    text: "Dashboard",
+    text: "Vaults",
     route: "/",
   },
   {
-    text: "Vaults",
-    route: "/vaults",
+    text: "Dashboard",
+    route: "/dashboard",
   },
 ];
 
 export default function Navbar() {
+  console.log("Navbar.tsx");
   const [menuModal, setMenuModal] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -48,7 +49,7 @@ export default function Navbar() {
         {/*--- desktop links---*/}
         <div className="hidden sm:flex space-x-4 md:space-x-12">
           {navLinks.map((i) => (
-            <Link key={i.text} href={i.route} className={`${i.text == pathname ? "underlineStatic" : "underlineAni"} text-lg font-semibold text-center cursor-pointer  relative`}>
+            <Link key={i.text} href={i.route} className={`${i.route == pathname ? "underlineStatic" : "underlineAni"} text-lg font-semibold text-center cursor-pointer  relative`}>
               {i.text}
             </Link>
           ))}

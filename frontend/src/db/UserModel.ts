@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-export type Vault = {
+export type UserVault = {
   id: string;
   title: string;
   principal: number;
@@ -10,7 +10,7 @@ export type Vault = {
 
 export interface IUser extends Document {
   user: string;
-  userVaults: Vault[];
+  userVaults: UserVault[];
   chartData: any;
   vaultIndex: number;
   todos: string[];

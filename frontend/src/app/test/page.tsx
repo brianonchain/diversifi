@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useOptimistic } from "react";
 // redux
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/state/store";
@@ -8,12 +8,15 @@ import { increment, decrement } from "@/state/counterSlice";
 import { useCounterStore } from "@/store";
 // react query
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// actions
+import { addTodoAction } from "@/actions";
 
 export default function Test() {
   console.log("test rendered once");
 
   // useState
   const [title, setTitle] = useState("");
+
   // redux
   const count = useSelector((state: RootState) => state.counter.value);
   const dispatch = useDispatch();
@@ -27,13 +30,13 @@ export default function Test() {
 
   // react query - get todos
   const todosQuery = useQuery({
+    queryKey: ["todos"],
     queryFn: () =>
       fetch("/api/getTodos", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ user: "brianonchain" }),
       }).then((res) => res.json()),
-    queryKey: ["todos"],
   });
   console.log("todosQuery.data", todosQuery.data);
 
@@ -90,7 +93,8 @@ export default function Test() {
           </div>
           <div className="justify-self-end">{counterZustand}</div>
         </div>
-        {/*--- to do list ---*/}
+
+        {/*--- TO DO LIST ---*/}
         <div className="w-full max-w-[400px] mt-12 grid grid-cols-[auto,auto] gap-4">
           <input className="grow px-3 py-2 rounded-lg outline-blue2 bg-slate-200 text-black" value={title} onChange={(e) => setTitle(e.currentTarget.value)} />
           <button
@@ -99,7 +103,8 @@ export default function Test() {
               if (title) {
                 try {
                   setTitle("");
-                  await addTodoMutation.mutateAsync(title);
+                  await addTodoAction(title);
+                  // await addTodoMutation.mutateAsync(title);
                 } catch (e) {
                   console.log(e);
                 }

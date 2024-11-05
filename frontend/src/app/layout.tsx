@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
 // context
-import ContextProvider from "@/contexts/ContextProvider";
+import Providers from "@/Providers";
 // components
 import Navbar from "@/app/_components/Navbar";
 import Footer from "@/app/_components/Footer";
@@ -33,17 +33,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const cookies = headers().get("cookie");
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // time
+  const date = new Date();
+  const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
+
+  const cookies = (await headers()).get("cookie");
+  console.log("layout.tsx", time);
 
   return (
     <html lang="en">
       <body className={`${inter.className} h-screen flex flex-col bg-blue1 text-slate-200 overflow-x-hidden overflow-y-auto`}>
-        <ContextProvider cookies={cookies}>
+        <Providers cookies={cookies}>
           <Navbar />
           {children}
           <Footer />
-        </ContextProvider>
+        </Providers>
       </body>
     </html>
   );
