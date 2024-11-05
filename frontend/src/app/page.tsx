@@ -2,20 +2,39 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import { cookies } from "next/headers";
+import { unstable_cache } from "next/cache";
 // components
 import SelectChain from "./_components/SelectChain";
 import Deposit from "./_components/Deposit";
 import HistoryClient from "./_components/HistoryClient";
 import VaultDetails from "./_components/VaultDetails";
-import SelectVaultServer from "./_components/SelectVaultServer";
+import SelectVaultClient from "./_components/SelectVaultClient";
 import DetectUserAddress from "./_components/DetectUserAddress";
 import ErrorModal from "./_components/ErrorModal";
 // utils
 import { LoadingGray24, LoadingGray40 } from "@/utils/components/LoadingGray";
+// db
+import dbConnect from "@/db/dbConnect";
+import VaultModel from "@/db/VaultModel";
+
+const getCachedVaultIds = unstable_cache(async () => getVaultIds(), ["vaultIds"]);
+
+async function getVaultIds() {
+  await dbConnect();
+  const vaults = await VaultModel.find({}, { chain: 1, "vaults.title": 1 });
+  let vaultIds: any = {};
+  for (const vault of vaults) {
+    const chain: string = vault.chain;
+    vaultIds[chain] = vault.vaults.map((i: any) => i.title.replaceAll(" ", "_"));
+  }
+  return vaultIds;
+}
 
 export default async function Vaults({ searchParams }: { searchParams: Promise<{ vault: string }> }) {
   const date = new Date();
   const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
+
+  const vaultIds = await getCachedVaultIds();
 
   // get states from search params
   const vaultId = (await searchParams)?.vault ?? "Polygon_Stablecoin_Vault";
@@ -23,7 +42,7 @@ export default async function Vaults({ searchParams }: { searchParams: Promise<{
   // get states from cookies
   const userAddressFromCookies = (await cookies()).get("userAddress")?.value;
 
-  console.log("page.tsx", time, "vaultId:", vaultId, "userAddressFromCookies:", userAddressFromCookies);
+  console.log("page.tsx", time, "vaultId:", vaultId, "userAddressFromCookies:", userAddressFromCookies, "vaultIds", vaultIds);
 
   return (
     <main className="w-full grow lg:min-h-0 flex justify-center lg:bgVaults">
@@ -32,15 +51,7 @@ export default async function Vaults({ searchParams }: { searchParams: Promise<{
       <div className="pb-[16px] sectionSize h-full grid grid-rows-[auto,auto,auto] lg:grid-cols-[auto_152px_1fr] lg:grid-rows-[1fr] gap-[16px]">
         <SelectChain />
         <div className="px-[12px] py-[24px] xs:p-[16px] cardBg4 rounded-xl flex flex-col items-center">
-          <Suspense
-            fallback={
-              <div className="grow flex items-center justify-center">
-                <LoadingGray40 />
-              </div>
-            }
-          >
-            <SelectVaultServer vaultId={vaultId} />
-          </Suspense>
+          <SelectVaultClient vaultIds={vaultIds} />
         </div>
 
         {/*--- DESCRIPTION, DEPOSIT, HISOTRY ---*/}

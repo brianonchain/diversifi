@@ -42,7 +42,7 @@ export default function SelectChain() {
             onClick={async (e) => {
               const date = new Date();
               console.log("chain clicked", date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`);
-              setVaultId(`${i}_Default`);
+              setVaultId(`${i}_Stablecoin_Vault`);
               router.push(`/?vault=${defaultVaultId[i]}`);
             }}
             className={`${
