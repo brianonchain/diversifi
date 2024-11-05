@@ -8,7 +8,7 @@ import dbConnect from "@/db/dbConnect";
 import UserModel from "@/db/UserModel";
 import VaultModel from "@/db/VaultModel";
 
-export default async function Dashboard({ searchParams }: { searchParams: { user_vault_index: number } }) {
+export default async function Dashboard() {
   // Because dashboard is a view-only route, don't need fancy revalidation from mutations, so react query not needed
   // Can just fetch userInfo in page.tsx and pass it down through props
 
