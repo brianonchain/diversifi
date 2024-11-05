@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 // zustand
-import { useChainStore, useVaultIndexStore } from "@/store";
+import { useChainStore, useVaultIdStore } from "@/store";
 
 const myChains = ["Polygon", "Optimism", "Arbitrum", "Base"];
 
@@ -13,20 +13,21 @@ const defaultVaultId: { [key: string]: string } = {
   Base: "Base_Stablecoin_Vault",
 };
 
-export default function SelectChain({ vaultId }: { vaultId: string }) {
+export default function SelectChain() {
   // time
   const date = new Date();
   const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
-
-  // chainState
-  const chainState = vaultId.split("_")[0];
 
   // search params
   const router = useRouter();
 
   // zustand - use this only if switching chain is laggy
-  const setChainZ = useChainStore((state) => state.setChain);
-  const setVaultIndexZ = useVaultIndexStore((state) => state.setVaultIndex);
+  const setChain = useChainStore((state) => state.setChain);
+  const vaultId = useVaultIdStore((state) => state.vaultId);
+  const setVaultId = useVaultIdStore((state) => state.setVaultId);
+
+  // chainState
+  const chainState = vaultId.split("_")[0];
 
   console.log("\nSelectChain.tsx", time, "\nchainState", chainState);
 
@@ -41,6 +42,7 @@ export default function SelectChain({ vaultId }: { vaultId: string }) {
             onClick={async (e) => {
               const date = new Date();
               console.log("chain clicked", date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`);
+              setVaultId(`${i}_Default`);
               router.push(`/?vault=${defaultVaultId[i]}`);
             }}
             className={`${

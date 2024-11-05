@@ -30,7 +30,7 @@ export default async function Vaults({ searchParams }: { searchParams: Promise<{
       <DetectUserAddress />
       <ErrorModal />
       <div className="pb-[16px] sectionSize h-full grid grid-rows-[auto,auto,auto] lg:grid-cols-[auto_152px_1fr] lg:grid-rows-[1fr] gap-[16px]">
-        <SelectChain vaultId={vaultId} />
+        <SelectChain />
         <div className="px-[12px] py-[24px] xs:p-[16px] cardBg4 rounded-xl flex flex-col items-center">
           <Suspense
             fallback={

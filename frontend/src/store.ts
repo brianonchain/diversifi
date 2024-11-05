@@ -16,9 +16,9 @@ type UserVaultIndexStore = {
   setUserVaultIndex: (userVaultIndex: number) => void;
 };
 
-type VaultIndexStore = {
-  vaultIndex: number;
-  setVaultIndex: (vaultIndex: number) => void;
+type VaultIdStore = {
+  vaultId: string;
+  setVaultId: (vaultId: string) => void;
 };
 
 type ErrorMsgStore = {
@@ -50,10 +50,10 @@ export const useUserVaultIndexStore = create<UserVaultIndexStore>((set) => ({
   },
 }));
 
-export const useVaultIndexStore = create<VaultIndexStore>((set) => ({
-  vaultIndex: 0,
-  setVaultIndex: (vaultIndex) => {
-    set(() => ({ vaultIndex: vaultIndex }));
+export const useVaultIdStore = create<VaultIdStore>((set) => ({
+  vaultId: "Polygon_Stablecoin_Vault",
+  setVaultId: (vaultId) => {
+    set(() => ({ vaultId: vaultId }));
   },
 }));
 
