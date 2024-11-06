@@ -1,31 +1,7 @@
 import { create } from "zustand";
 
-type CounterStore = {
-  count: number;
-  increment: () => void;
-  decrement: () => void;
-};
-
-type ChainStore = {
-  chain: string;
-  setChain: (chain: string) => void;
-};
-
-type UserVaultIndexStore = {
-  userVaultIndex: number;
-  setUserVaultIndex: (userVaultIndex: number) => void;
-};
-
-type VaultIdStore = {
-  vaultId: string;
-  setVaultId: (vaultId: string) => void;
-};
-
-type ErrorMsgStore = {
-  errorMsg: string;
-  setErrorMsg: (errorMsg: string) => void;
-};
-
+// counter
+type CounterStore = { count: number; increment: () => void; decrement: () => void };
 export const useCounterStore = create<CounterStore>((set) => ({
   count: 0,
   increment: () => {
@@ -36,13 +12,8 @@ export const useCounterStore = create<CounterStore>((set) => ({
   },
 }));
 
-export const useChainStore = create<ChainStore>((set) => ({
-  chain: "Polygon",
-  setChain: (chain) => {
-    set(() => ({ chain: chain }));
-  },
-}));
-
+// userVaultIndex
+type UserVaultIndexStore = { userVaultIndex: number; setUserVaultIndex: (userVaultIndex: number) => void };
 export const useUserVaultIndexStore = create<UserVaultIndexStore>((set) => ({
   userVaultIndex: 0,
   setUserVaultIndex: (userVaultIndex) => {
@@ -50,6 +21,8 @@ export const useUserVaultIndexStore = create<UserVaultIndexStore>((set) => ({
   },
 }));
 
+// vaultId
+type VaultIdStore = { vaultId: string; setVaultId: (vaultId: string) => void };
 export const useVaultIdStore = create<VaultIdStore>((set) => ({
   vaultId: "Polygon_Stablecoin_Vault",
   setVaultId: (vaultId) => {
@@ -57,6 +30,8 @@ export const useVaultIdStore = create<VaultIdStore>((set) => ({
   },
 }));
 
+// errorMsg
+type ErrorMsgStore = { errorMsg: string; setErrorMsg: (errorMsg: string) => void };
 export const useErrorMsgStore = create<ErrorMsgStore>((set) => ({
   errorMsg: "",
   setErrorMsg: (errorMsg) => {

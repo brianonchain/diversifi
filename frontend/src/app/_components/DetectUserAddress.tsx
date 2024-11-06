@@ -8,10 +8,13 @@ export default function DetectUserAddress() {
   const { address } = useAccount();
   const userAddressFromCookie = getCookie("userAddress");
 
+  console.log("/ DetectUserAddress.tsx address", address);
+
   useEffect(() => {
-    if (!userAddressFromCookie && address) {
+    console.log("DetectUserAddress.tsx useEffect");
+    if (address && address != userAddressFromCookie) {
       setUserAddressCookieAction(address);
     }
-  }, []);
+  }, [address]);
   return <></>;
 }

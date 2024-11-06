@@ -1,4 +1,6 @@
 "use client";
+// wagim & viem
+import { useAccount } from "wagmi";
 import { formatUnits } from "viem";
 // react query
 import { useQuery } from "@tanstack/react-query";
@@ -6,11 +8,13 @@ import { useQuery } from "@tanstack/react-query";
 import { vaultIdToContractAddress, chainToUsdcAddress } from "@/utils/constants";
 import { HistoryItem } from "@/utils/constants";
 
-export default function History({ userAddressFromCookies, vaultId }: { userAddressFromCookies: string; vaultId: string }) {
+export default function History({ vaultId }: { vaultId: string }) {
   // time
   const date = new Date();
   const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
-  console.log("HistoryClient.tsx", time, "userAddressFromCookies", userAddressFromCookies, "vaultId", vaultId);
+  console.log("HistoryClient.tsx", time, "vaultId", vaultId);
+
+  const { address } = useAccount();
 
   // get contract address
   const contractAddress = vaultIdToContractAddress[vaultId];
@@ -20,17 +24,17 @@ export default function History({ userAddressFromCookies, vaultId }: { userAddre
 
   // react query
   const historyQuery = useQuery({
-    queryKey: ["history", userAddressFromCookies, contractAddress, chain],
+    queryKey: ["history", address, contractAddress, chain],
     queryFn: async () => {
       const res = await fetch("/api/getHistory", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ userAddress: userAddressFromCookies, contractAddress: contractAddress, chain: chain }),
+        body: JSON.stringify({ userAddress: address, contractAddress: contractAddress, chain: chain }),
       });
       const data = await res.json();
       return data;
     },
-    enabled: userAddressFromCookies ? true : false,
+    enabled: address ? true : false,
     staleTime: Infinity,
     gcTime: Infinity,
   });

@@ -5,11 +5,10 @@ import { cookies } from "next/headers";
 import { unstable_cache } from "next/cache";
 // components
 import SelectChain from "./_components/SelectChain";
-import Deposit from "./_components/Deposit";
-import HistoryClient from "./_components/HistoryClient";
+import SelectVault from "./_components/SelectVault";
 import VaultDetails from "./_components/VaultDetails";
-import SelectVaultClient from "./_components/SelectVaultClient";
-import DetectUserAddress from "./_components/DetectUserAddress";
+import Deposit from "./_components/Deposit";
+import History from "./_components/History";
 import ErrorModal from "./_components/ErrorModal";
 // utils
 import { LoadingGray24, LoadingGray40 } from "@/utils/components/LoadingGray";
@@ -17,41 +16,45 @@ import { LoadingGray24, LoadingGray40 } from "@/utils/components/LoadingGray";
 import dbConnect from "@/db/dbConnect";
 import VaultModel from "@/db/VaultModel";
 
-const getCachedVaultIds = unstable_cache(async () => getVaultIds(), ["vaultIds"]);
-
+// set up caching for vaultIds
+const getCachedVaultIds = unstable_cache(() => getVaultIds(), ["vaultIds"]);
 async function getVaultIds() {
   await dbConnect();
   const vaults = await VaultModel.find({}, { chain: 1, "vaults.title": 1 });
   let vaultIds: any = {};
+  let defaultVaultIds: any = {};
   for (const vault of vaults) {
     const chain: string = vault.chain;
     vaultIds[chain] = vault.vaults.map((i: any) => i.title.replaceAll(" ", "_"));
+    defaultVaultIds[chain] = vault.vaults[0].title.replaceAll(" ", "_");
   }
-  return vaultIds;
+  return { vaultIds, defaultVaultIds };
 }
 
 export default async function Vaults({ searchParams }: { searchParams: Promise<{ vault: string }> }) {
   const date = new Date();
   const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
 
-  const vaultIds = await getCachedVaultIds();
-
   // get states from search params
   const vaultId = (await searchParams)?.vault ?? "Polygon_Stablecoin_Vault";
 
-  // get states from cookies
-  const userAddressFromCookies = (await cookies()).get("userAddress")?.value;
+  // get list of vaultIds
+  const { vaultIds, defaultVaultIds } = await getCachedVaultIds();
 
-  console.log("page.tsx", time, "vaultId:", vaultId, "userAddressFromCookies:", userAddressFromCookies, "vaultIds", vaultIds);
+  console.log("page.tsx", time, "vaultId:", vaultId, "vaultIds", vaultIds, "defaultVaultIds", defaultVaultIds);
 
   return (
     <main className="w-full grow lg:min-h-0 flex justify-center lg:bgVaults">
-      <DetectUserAddress />
       <ErrorModal />
       <div className="pb-[16px] sectionSize h-full grid grid-rows-[auto,auto,auto] lg:grid-cols-[auto_152px_1fr] lg:grid-rows-[1fr] gap-[16px]">
-        <SelectChain />
         <div className="px-[12px] py-[24px] xs:p-[16px] cardBg4 rounded-xl flex flex-col items-center">
-          <SelectVaultClient vaultIds={vaultIds} />
+          <div className="lg:text-center font-bold">Chains</div>
+          <div className="mt-2 xs:mt-4 grid grid-flow-col lg:grid-flow-row gap-[12px] xs:gap-[24px]">
+            <SelectChain defaultVaultIds={defaultVaultIds} />
+          </div>
+        </div>
+        <div className="px-[12px] py-[24px] xs:p-[16px] cardBg4 rounded-xl flex flex-col items-center">
+          <SelectVault vaultIds={vaultIds} />
         </div>
 
         {/*--- DESCRIPTION, DEPOSIT, HISOTRY ---*/}
@@ -83,7 +86,7 @@ export default async function Vaults({ searchParams }: { searchParams: Promise<{
               <div className="text-right">Deposit</div>
               <div className="text-right">Withdrawal</div>
             </div>
-            {userAddressFromCookies ? <HistoryClient userAddressFromCookies={userAddressFromCookies} vaultId={vaultId} /> : <div className="grow"></div>}
+            <History vaultId={vaultId} />
             <div className="pt-[8px] lg:pt-0 pb-1 w-full lg:px-4 flex justify-end items-center">
               <div className="text-xs font-medium text-[#77798F]">powered by</div>
               <Image src="/thegraph.svg" alt="thegraph" width={0} height={0} className="ml-2 pt-1 w-[80px] opacity-50" />
