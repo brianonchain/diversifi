@@ -1,63 +1,43 @@
 "use client";
 // wagmi
-import { wagmiAdapter, projectId } from "@/config/wagmiConfig";
 import { cookieToInitialState, WagmiProvider, type Config } from "wagmi";
+import { cookieStorage, createStorage, http } from "@wagmi/core";
+// appkit
 import { createAppKit } from "@reown/appkit/react";
-import { arbitrum, polygon, optimism, base } from "@reown/appkit/networks";
+import { sepolia, arbitrum, polygon, optimism, base } from "@reown/appkit/networks";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 // react query
-import { isServer, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 //redux
 import { Provider } from "react-redux";
 import { store } from "@/state/store";
 
-// Set up queryClient
-function makeQueryClient() {
-  return new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 60 * 1000, // With SSR, we usually want to set some default staleTime above 0 to avoid refetching immediately on the client
-      },
-    },
-  });
-}
+// react query
+const queryClient = new QueryClient();
 
-let browserQueryClient: QueryClient | undefined = undefined;
+// wagmi
+export const wagmiAdapter = new WagmiAdapter({
+  storage: createStorage({
+    storage: cookieStorage,
+  }),
+  ssr: true,
+  projectId: process.env.NEXT_PUBLIC_REOWN_PROJECT_ID!,
+  networks: [sepolia, polygon, optimism, arbitrum, base],
+});
 
-function getQueryClient() {
-  const date = new Date();
-  const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
-  if (isServer) {
-    console.log("server queryClient created", time);
-    return makeQueryClient(); // Server: always make a new query client
-  } else {
-    if (!browserQueryClient) {
-      browserQueryClient = makeQueryClient(); // Browser: make a new query client if we don't already have one. This is very important, so we don't re-make a new client if React suspends during the initial render. This may not be needed if we have a suspense boundary BELOW the creation of the query client
-      console.log("browser queryClient created");
-    } else {
-      console.log("browser queryClient already exists");
-    }
-    return browserQueryClient;
-  }
-}
-
-// reown
-export const metadata = {
-  name: "DiversiFi",
-  description: "Earn diversified yield (test app)",
-  url: "https://diversifi.vercel.app",
-  icons: ["/icon-svg.svg"],
-};
-
-if (!projectId) throw new Error("Project ID is not defined");
-
-// Create the modal
-const modal = createAppKit({
+// appkit
+createAppKit({
   adapters: [wagmiAdapter],
-  projectId,
-  networks: [arbitrum, polygon, optimism, base],
+  projectId: process.env.NEXT_PUBLIC_REOWN_PROJECT_ID!,
+  networks: [sepolia, polygon, optimism, arbitrum, base],
   defaultNetwork: polygon,
-  metadata: metadata,
+  metadata: {
+    name: "DiversiFi",
+    description: "Earn diversified yield (test app)",
+    url: "https://diversifi.vercel.app",
+    icons: ["/icon-svg.svg"],
+  },
   features: {
     // analytics: true, // Optional - defaults to your Cloud configuration
     email: false, // default to true
@@ -68,12 +48,8 @@ const modal = createAppKit({
 });
 
 export default function Providers({ children, cookies }: { children: React.ReactNode; cookies: string | null }) {
-  const date = new Date();
-  const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
-  console.log("Providers.tsx", time);
-
+  console.log("Providers.tsx");
   const initialState = cookieToInitialState(wagmiAdapter.wagmiConfig as Config, cookies);
-  const queryClient = getQueryClient();
 
   return (
     <WagmiProvider config={wagmiAdapter.wagmiConfig as Config} initialState={initialState}>
