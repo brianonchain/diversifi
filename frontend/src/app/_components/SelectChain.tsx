@@ -31,7 +31,7 @@ export default function SelectChain({ defaultVaultIds }: { defaultVaultIds: { [k
             const date = new Date();
             console.log("chain clicked", date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`);
             setVaultId(defaultVaultIds[i]);
-            router.push(`/?vault=${defaultVaultIds[i]}`);
+            router.push(`/?vaultId=${defaultVaultIds[i]}`);
           }}
           className={`${
             chainState === i ? "selectGlass" : ""

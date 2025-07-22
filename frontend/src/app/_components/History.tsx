@@ -5,8 +5,7 @@ import { formatUnits } from "viem";
 // react query
 import { useQuery } from "@tanstack/react-query";
 // utils
-import { vaultIdToContractAddress, chainToUsdcAddress } from "@/utils/constants";
-import { HistoryItem } from "@/utils/constants";
+import { vaultIdToContractAddress } from "@/utils/constants";
 
 export default function History({ vaultId }: { vaultId: string }) {
   // time

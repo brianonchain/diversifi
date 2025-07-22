@@ -1,22 +1,20 @@
 "use client";
 // next
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 // wagmi & viem
 import { useConfig, useAccount, useReadContracts } from "wagmi";
-import { readContract, writeContract, waitForTransactionReceipt, switchChain } from "wagmi/actions";
+import { writeContract, waitForTransactionReceipt } from "wagmi/actions";
 import { parseUnits, formatUnits } from "viem";
-import { useAppKit } from "@reown/appkit/react";
 // components
 import TxModal from "./TxModal";
-import ErrorModal from "@/utils/components/ErrorModal";
-import { LoadingGray24, LoadingGray40 } from "@/utils/components/LoadingGray";
 // utils
+import { LoadingGray40 } from "@/utils/components/LoadingGray";
 import { erc20Abi } from "@/utils/abis/erc20Abi";
 import { depositAbi } from "@/utils/abis/depositAbi";
 import { vaultIdToContractAddress, chainToUsdcAddress } from "@/utils/constants";
 // react query
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 // zustand
 import { useErrorMsgStore } from "@/store";
 // actions
@@ -54,7 +52,6 @@ export default function Deposit({ vaultId }: { vaultId: string }) {
 
   // hooks
   const { address, isConnected } = useAccount(); // chain.name = Polygon | OP Mainnet | Arbitrum One | Base
-  const { open } = useAppKit();
   const config = useConfig();
   const queryClient = useQueryClient();
 

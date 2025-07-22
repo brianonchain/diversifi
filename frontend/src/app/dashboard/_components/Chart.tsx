@@ -8,7 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 // zustand
 import { useUserVaultIndexStore } from "@/store";
 
-export default function LineChart({ userAddressFromCookies, chartData, userVaults }: { userAddressFromCookies: string; chartData: any; userVaults: any }) {
+export default function LineChart({ chartData, userVaults }: { chartData: any; userVaults: any }) {
   const date = new Date();
   const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
   console.log("/dashboard Chart.tsx", time);

@@ -4,7 +4,7 @@ import UserModel from "@/db/UserModel";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
-export async function setUserAddressCookieAction(userAddress: `0x${string}`) {
+export async function setUserAddressCookieAction(userAddress: string) {
   console.log("entered setUserAddressCookieAction");
   (await cookies()).set("userAddress", userAddress);
 }

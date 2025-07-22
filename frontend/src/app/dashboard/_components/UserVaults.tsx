@@ -2,7 +2,7 @@
 // zustaand
 import { useUserVaultIndexStore } from "@/store";
 
-export default function UserVaults({ userAddressFromCookies, userVaults }: { userAddressFromCookies: string; userVaults: any }) {
+export default function UserVaults({ userVaults }: { userVaults: any }) {
   const date = new Date();
   const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
   console.log("/dashboard UserVaults.tsx", time);
