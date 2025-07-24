@@ -34,12 +34,8 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // time
-  const date = new Date();
-  const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
-
   const cookies = (await headers()).get("cookie");
-  console.log("layout.tsx", time);
+  console.log("layout.tsx");
 
   return (
     <html lang="en">

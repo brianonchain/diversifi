@@ -1,33 +1,29 @@
-import {
-  DepositEvent as DepositEventEvent,
-  WithdrawalEvent as WithdrawalEventEvent
-} from "../generated/Contract/Contract"
-import { DepositEvent, WithdrawalEvent } from "../generated/schema"
+import { DepositEvent as DepositEventEvent, WithdrawalEvent as WithdrawalEventEvent } from "../generated/Contract/Contract";
+import { DepositEvent, WithdrawalEvent } from "../generated/schema";
+import { dataSource } from "@graphprotocol/graph-ts";
 
 export function handleDepositEvent(event: DepositEventEvent): void {
-  let entity = new DepositEvent(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.user = event.params.user
-  entity.amount = event.params.amount
+  let entity = new DepositEvent(event.transaction.hash.concatI32(event.logIndex.toI32()));
+  entity.user = event.params.user;
+  entity.amount = event.params.amount;
+  entity.chain = dataSource.network();
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
 
-  entity.save()
+  entity.save();
 }
 
 export function handleWithdrawalEvent(event: WithdrawalEventEvent): void {
-  let entity = new WithdrawalEvent(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.user = event.params.user
-  entity.amount = event.params.amount
+  let entity = new WithdrawalEvent(event.transaction.hash.concatI32(event.logIndex.toI32()));
+  entity.user = event.params.user;
+  entity.amount = event.params.amount;
+  entity.chain = dataSource.network();
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
 
-  entity.save()
+  entity.save();
 }

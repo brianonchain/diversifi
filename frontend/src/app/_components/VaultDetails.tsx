@@ -31,7 +31,7 @@ export default async function VaultDetails({ vaultId }: { vaultId: string }) {
       {/*--- title ---*/}
       <div className="pb-[16px] lg:py-[16px] font-bold text-xl">{vaultDetails?.title}</div>
       {/*---description---*/}
-      <div className="flex-1 flex flex-col justify-center text-base">
+      <div className="flex-1 px-3 flex flex-col justify-center text-base">
         {vaultDetails?.text.map((i: string, index: number) => (
           <p key={index}>{i}</p>
         ))}

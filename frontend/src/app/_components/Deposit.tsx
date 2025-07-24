@@ -30,12 +30,9 @@ const chainToId: { [key: string]: number } = {
 const rangeValues = [0, 25, 50, 75, 100];
 
 export default function Deposit({ vaultId }: { vaultId: string }) {
-  // time
-  const date = new Date();
-  const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
-
   // chainState
   const chainState = vaultId.split("_")[0];
+  console.log("Deposit.tsx", "chainState", chainState);
 
   // deposit states
   const [amount, setAmount] = useState<string | undefined>();
@@ -85,7 +82,6 @@ export default function Deposit({ vaultId }: { vaultId: string }) {
 
   console.log(
     "\nDeposit.tsx",
-    time,
     "\nvaultId:",
     vaultId,
     "\nchainState:",

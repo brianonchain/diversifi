@@ -21,7 +21,11 @@ import VaultModel from "@/db/VaultModel";
 type Chain = string;
 type VaultId = string;
 type VaultIds = { [key: Chain]: VaultId };
+
 const getCachedVaultIds = unstable_cache(() => getVaultIds(), ["vaultIds"]);
+
+// vaultIds = vault titles with spaces replaced with underscores
+// defaultVaultIds = first vault title with spaces replaced with underscores
 async function getVaultIds() {
   await dbConnect();
   const vaults = await VaultModel.find({}, { chain: 1, "vaults.title": 1 });
@@ -36,16 +40,13 @@ async function getVaultIds() {
 }
 
 export default async function Vaults({ searchParams }: { searchParams: Promise<{ vaultId: string }> }) {
-  const date = new Date();
-  const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
-
   const userAddressFromCookies = (await cookies()).get("userAddress")?.value; // get states from cookies
 
   const vaultId = (await searchParams)?.vaultId ?? "Polygon_Stablecoin_Vault"; // get states from search params
 
   const { vaultIds, defaultVaultIds } = await getCachedVaultIds(); // get list of vaultIds
 
-  console.log("page.tsx", time, "vaultId:", vaultId, "vaultIds", vaultIds, "defaultVaultIds", defaultVaultIds);
+  console.log("page.tsx", "vaultId:", vaultId, "vaultIds", vaultIds, "defaultVaultIds", defaultVaultIds);
 
   return (
     <main className="w-full grow lg:min-h-0 flex justify-center lg:bgVaults">

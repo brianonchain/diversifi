@@ -1,0 +1,29 @@
+specVersion: 1.3.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Deposit
+    network: sepolia
+    source:
+      address: "0xd8d86fe48323Cd4A630cef4f7825fCB22dEF94E9"
+      abi: Deposit
+      startBlock: 8822530
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - DepositEvent
+        - WithdrawalEvent
+      abis:
+        - name: Deposit
+          file: ./abis/Deposit.json
+      eventHandlers:
+        - event: DepositEvent(indexed address,uint256)
+          handler: handleDepositEvent
+        - event: WithdrawalEvent(indexed address,uint256)
+          handler: handleWithdrawalEvent
+      file: ./src/deposit.ts

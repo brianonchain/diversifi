@@ -4,12 +4,12 @@ indexerHints:
 schema:
   file: ./schema.graphql
 dataSources:
-  - kind: ethereum
+  - kind: ethereum/contract
     name: Contract
-    network: matic
+    network: polygon
     source:
-      address: "0x599559Ed394ADd1117ab72667e49d1560A2124E0"
       abi: Contract
+      address: "0x599559Ed394ADd1117ab72667e49d1560A2124E0"
       startBlock: 61328490
     mapping:
       kind: ethereum/events

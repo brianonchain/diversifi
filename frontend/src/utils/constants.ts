@@ -20,6 +20,7 @@ export const allVaults: { [key: string]: VaultInfo[] } = {
     { id: "arb-glp", title: "Arbitrum GLP Vault", src: "/arb-glp.svg" },
   ],
   Base: [{ id: "base-stables1", title: "Base Stablecoin Vault", src: "/base-stables1.svg" }],
+  Sepolia: [{ id: "sepolia-stables1", title: "Sepolia Stablecoin Vault", src: "/sepolia-stables1.svg" }],
 };
 
 export const vaultIdToContractAddress: { [key: string]: `0x${string}` } = {
@@ -35,6 +36,7 @@ export const chainToUsdcAddress: { [key: string]: `0x${string}` } = {
   Optimism: "0x0b2c639c533813f4aa9d7837caf62653d097ff85",
   Arbitrum: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
   Base: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  Sepolia: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238", // eth sepolia
 };
 
 const vaults = [
