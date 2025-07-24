@@ -25,17 +25,12 @@ export const allVaults: { [key: string]: VaultInfo[] } = {
 
 export const vaultIdToContractAddress: { [key: string]: `0x${string}` } = {
   Polygon_Stablecoin_Vault: "0x599559Ed394ADd1117ab72667e49d1560A2124E0",
-  Optimism_Stablecoin_Vault: "0x599559Ed394ADd1117ab72667e49d1560A2124E0",
-  Arbitrum_Stablecoin_Vault: "0x599559Ed394ADd1117ab72667e49d1560A2124E0",
-  Arbitrum_GLP_Vault: "0x599559Ed394ADd1117ab72667e49d1560A2124E0",
   Base_Stablecoin_Vault: "0x599559Ed394ADd1117ab72667e49d1560A2124E0",
   Sepolia_Stablecoin_Vault: "0xd8d86fe48323Cd4A630cef4f7825fCB22dEF94E9",
 };
 
 export const chainToUsdcAddress: { [key: string]: `0x${string}` } = {
   Polygon: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
-  Optimism: "0x0b2c639c533813f4aa9d7837caf62653d097ff85",
-  Arbitrum: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
   Base: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
   Sepolia: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238", // eth sepolia
 };
