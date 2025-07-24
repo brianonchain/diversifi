@@ -25,6 +25,7 @@ export default function SelectChain({ defaultVaultIds }: { defaultVaultIds: { [k
         <div
           key={i.id}
           onClick={async (e) => {
+            switchChain({ chainId: i.id });
             setVaultId(defaultVaultIds[i.name]);
             router.push(`/?vaultId=${defaultVaultIds[i.name]}`);
           }}

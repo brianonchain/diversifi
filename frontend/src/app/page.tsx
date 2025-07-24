@@ -10,7 +10,6 @@ import VaultDetails from "./_components/VaultDetails";
 import Deposit from "./_components/Deposit";
 import History from "./_components/History";
 import ErrorModal from "../utils/components/ErrorModal";
-import DetectUserAddress from "../utils/components/DetectUserAddress";
 // utils
 import { LoadingGray24, LoadingGray40 } from "@/utils/components/LoadingGray";
 // db
@@ -40,17 +39,13 @@ async function getVaultIds() {
 }
 
 export default async function Vaults({ searchParams }: { searchParams: Promise<{ vaultId: string }> }) {
-  const userAddressFromCookies = (await cookies()).get("userAddress")?.value; // get states from cookies
-
-  const vaultId = (await searchParams)?.vaultId ?? "Polygon_Stablecoin_Vault"; // get states from search params
-
+  const vaultId = (await searchParams)?.vaultId ?? "Sepolia_Stablecoin_Vault"; // get states from search params
   const { vaultIds, defaultVaultIds } = await getCachedVaultIds(); // get list of vaultIds
 
   console.log("page.tsx", "vaultId:", vaultId, "vaultIds", vaultIds, "defaultVaultIds", defaultVaultIds);
 
   return (
     <main className="w-full grow lg:min-h-0 flex justify-center lg:bgVaults">
-      <DetectUserAddress userAddressFromCookies={userAddressFromCookies} />
       <ErrorModal />
       <div className="pb-[16px] sectionSize h-full grid grid-rows-[auto,auto,auto] lg:grid-cols-[auto_152px_1fr] lg:grid-rows-[1fr] gap-[16px]">
         {/*--- SELECT CHAIN ---*/}

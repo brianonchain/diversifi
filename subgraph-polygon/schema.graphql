@@ -2,7 +2,6 @@ type DepositEvent @entity(immutable: true) {
   id: Bytes!
   user: Bytes! # address
   amount: BigInt! # uint256
-  chain: String! # network identifier (matic, sepolia, etc.)
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -12,7 +11,6 @@ type WithdrawalEvent @entity(immutable: true) {
   id: Bytes!
   user: Bytes! # address
   amount: BigInt! # uint256
-  chain: String! # network identifier (matic, sepolia, etc.)
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!

@@ -29,6 +29,7 @@ export const vaultIdToContractAddress: { [key: string]: `0x${string}` } = {
   Arbitrum_Stablecoin_Vault: "0x599559Ed394ADd1117ab72667e49d1560A2124E0",
   Arbitrum_GLP_Vault: "0x599559Ed394ADd1117ab72667e49d1560A2124E0",
   Base_Stablecoin_Vault: "0x599559Ed394ADd1117ab72667e49d1560A2124E0",
+  Sepolia_Stablecoin_Vault: "0xd8d86fe48323Cd4A630cef4f7825fCB22dEF94E9",
 };
 
 export const chainToUsdcAddress: { [key: string]: `0x${string}` } = {

@@ -25,14 +25,12 @@ const chainToId: { [key: string]: number } = {
   Optimism: 10,
   Arbitrum: 42161,
   Base: 8453,
+  Sepolia: 11155111,
 };
-
-const rangeValues = [0, 25, 50, 75, 100];
 
 export default function Deposit({ vaultId }: { vaultId: string }) {
   // chainState
   const chainState = vaultId.split("_")[0];
-  console.log("Deposit.tsx", "chainState", chainState);
 
   // deposit states
   const [amount, setAmount] = useState<string | undefined>();
@@ -40,9 +38,9 @@ export default function Deposit({ vaultId }: { vaultId: string }) {
   const [txState, setTxState] = useState("initial"); // initial | approve | approving | deposit | depositing | withdraw | withdrawing | final
   const [txHash, setTxHash] = useState("0x0");
   // modal states
-  // const [errorMsg, setErrorMsg] = useState("");
   const [txModal, setTxModal] = useState(false);
   const [depositOrWithdraw, setDepositOrWithdraw] = useState("Deposit");
+  // const [errorMsg, setErrorMsg] = useState("");
 
   // zustand
   const setErrorMsg = useErrorMsgStore((state) => state.setErrorMsg);
@@ -82,6 +80,8 @@ export default function Deposit({ vaultId }: { vaultId: string }) {
 
   console.log(
     "\nDeposit.tsx",
+    "\nchainState:",
+    chainState,
     "\nvaultId:",
     vaultId,
     "\nchainState:",
@@ -185,7 +185,7 @@ export default function Deposit({ vaultId }: { vaultId: string }) {
     try {
       setTxState("withdraw");
       const withdrawHash = await writeContract(config, {
-        address: "0x599559Ed394ADd1117ab72667e49d1560A2124E0",
+        address: vaultIdToContractAddress[vaultId],
         abi: depositAbi,
         functionName: "withdraw",
         args: [parseUnits(amount, 6)],
@@ -269,7 +269,7 @@ export default function Deposit({ vaultId }: { vaultId: string }) {
                 ></input>
                 {/*--- range values ---*/}
                 <div className="mt-[4px] px-[4px] w-full flex justify-between text-[13px] text-slate-400">
-                  {rangeValues.map((i) => (
+                  {[0, 25, 50, 75, 100].map((i) => (
                     <div
                       key={i}
                       className="hover:text-slate-200 cursor-pointer"
@@ -285,8 +285,9 @@ export default function Deposit({ vaultId }: { vaultId: string }) {
                 </div>
                 {/*--- buttons ---*/}
                 <button
-                  className={`mt-[32px] buttonPrimary w-full ${chainState != "Polygon" || txState != "initial" ? "bg-slate-600 border-slate-600 pointer-events-none" : ""}`}
+                  className={`mt-[32px] buttonPrimary w-full`}
                   onClick={() => (depositOrWithdraw == "Deposit" ? deposit() : withdraw())}
+                  disabled={(chainState != "Polygon" && chainState != "Sepolia") || txState != "initial"}
                 >
                   {depositOrWithdraw}
                 </button>

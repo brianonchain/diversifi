@@ -1,23 +1,22 @@
 "use client";
 // next
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 // zustand
 import { useVaultIdStore } from "@/store";
 
 export default function SelectVault({ vaultIds }: { vaultIds: any }) {
-  // time
-  const date = new Date();
-  const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
-
   // zustand
-  const vaultId = useVaultIdStore((state) => state.vaultId);
-  const setVaultId = useVaultIdStore((state) => state.setVaultId);
-  const chain = vaultId.split("_")[0];
+  // const vaultId = useVaultIdStore((state) => state.vaultId);
+  // const setVaultId = useVaultIdStore((state) => state.setVaultId);
+  // const chain = vaultId.split("_")[0];
 
-  console.log("\nSelectVaultClient.tsx", time, "\nvaultIds:", vaultIds, "\nvaultId", vaultId, "\nchain", chain);
-
-  // router
+  // hooks
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const vaultId = searchParams.get("vaultId") ?? "Sepolia_Stablecoin_Vault";
+  const chain = vaultId?.split("_")[0];
+
+  console.log("\nSelectVault.tsx", "\nvaultIds:", vaultIds, "\nvaultId", vaultId, "\nchain", chain);
 
   return (
     <>
@@ -25,7 +24,7 @@ export default function SelectVault({ vaultIds }: { vaultIds: any }) {
         <div
           key={i}
           onClick={() => {
-            setVaultId(i);
+            // setVaultId(i);
             router.push(`/?vaultId=${i}`);
           }}
           className={`${

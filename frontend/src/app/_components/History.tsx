@@ -8,10 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { vaultIdToContractAddress } from "@/utils/constants";
 
 export default function History({ vaultId }: { vaultId: string }) {
-  // time
-  const date = new Date();
-  const time = date.toLocaleTimeString("en-US", { hour12: false }) + `.${date.getMilliseconds()}`;
-  console.log("HistoryClient.tsx", time, "vaultId", vaultId);
+  console.log("HistoryClient.tsx", "vaultId", vaultId);
 
   const { address } = useAccount();
 

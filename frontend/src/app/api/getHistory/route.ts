@@ -4,7 +4,7 @@ export const POST = async (req: Request) => {
   console.log("entered getHistory api");
   const { userAddress, contractAddress, chain } = await req.json();
 
-  if (chain == "Polygon") {
+  if (chain == "Polygon" || chain == "Sepolia") {
     // "!" after type means it's "non-nullable" - will throw error if null
     const query = gql`
       query ($address: Bytes!) {
@@ -22,7 +22,11 @@ export const POST = async (req: Request) => {
     `;
     const vars = { address: userAddress };
 
-    const url = "https://api.studio.thegraph.com/query/88146/depositcontract/version/latest";
+    const urls: { [key: string]: string } = {
+      Polygon: "https://api.studio.thegraph.com/query/88146/depositcontract/version/latest",
+      Sepolia: "https://api.studio.thegraph.com/query/88146/test/v0.0.1",
+    };
+    const url = urls[chain];
 
     try {
       var { depositEvents, withdrawalEvents } = (await request({ url: url, document: query, variables: vars })) as any;
