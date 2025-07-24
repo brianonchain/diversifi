@@ -23,8 +23,8 @@ export const POST = async (req: Request) => {
     const vars = { address: userAddress };
 
     const urls: { [key: string]: string } = {
-      Polygon: "https://api.studio.thegraph.com/query/88146/diversifi-polygon/version/latest",
-      Sepolia: "https://api.studio.thegraph.com/query/88146/diversifi-sepolia/version/latest",
+      Polygon: `https://api.studio.thegraph.com/query/${process.env.GRAPH_USER_ID}/diversifi-polygon/version/latest`,
+      Sepolia: `https://api.studio.thegraph.com/query/${process.env.GRAPH_USER_ID}/diversifi-sepolia/version/latest`,
     };
     const url = urls[chain];
 
