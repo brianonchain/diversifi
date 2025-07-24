@@ -1,6 +1,6 @@
 # Introduction
 
-DiversiFi DApp (diversifi.vercel.app/) is a test DApp (multichain) where users can deposit/withdraw USDC on Ethereum Sepolia and Polygon. The DApp showcases a user-friendly UI for approve & transfer, interactive line charts, and a transaction history UI powered by The Graph.
+DiversiFi DApp is a test DApp where users can deposit/withdraw USDC on the networks Ethereum Sepolia and Polygon. The DApp showcases a user-friendly UI for approve & transfer, interactive line charts, and a transaction history UI powered by The Graph.
 
 Visit https://diversifi.vercel.app/ to test it out!
 
