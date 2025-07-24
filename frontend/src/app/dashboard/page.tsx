@@ -3,8 +3,6 @@ import { cookies } from "next/headers";
 // components
 import Chart from "./_components/Chart";
 import UserVaults from "./_components/UserVaults";
-// utils
-import DetectUserAddress from "@/utils/components/DetectUserAddress";
 // db
 import dbConnect from "@/db/dbConnect";
 import UserModel from "@/db/UserModel";
@@ -12,10 +10,7 @@ import UserModel from "@/db/UserModel";
 export default async function Dashboard() {
   // Because dashboard is a view-only route, don't need fancy revalidation from mutations, so revalidatePath is sufficient and React Query is not needed
   // Can just fetch userInfo in page.tsx and pass it down through props
-
-  const date1 = new Date();
-  const time1 = date1.toLocaleTimeString("en-US", { hour12: false }) + `.${date1.getMilliseconds()}`;
-  console.log("/dashboard page.tsx start", time1);
+  console.log("page.tsx");
 
   // get cookies
   let userAddressFromCookies = (await cookies()).get("userAddress")?.value;
@@ -28,13 +23,8 @@ export default async function Dashboard() {
     var chartData = JSON.parse(JSON.stringify(doc.chartData));
   }
 
-  const date2 = new Date();
-  const time2 = date2.toLocaleTimeString("en-US", { hour12: false }) + `.${date2.getMilliseconds()}`;
-  console.log("/dashboard page.tsx end", time2);
-
   return (
     <div className="flex-1 w-full flex justify-center">
-      <DetectUserAddress userAddressFromCookies={userAddressFromCookies} />
       {userAddressFromCookies ? (
         <div className="sectionSize h-full grid grid-rows-[repeat(3,600px)] lg:grid-cols-[1fr_2fr] lg:grid-rows-[1fr_1fr] gap-[24px]">
           {/*---LEFT CARD---*/}
