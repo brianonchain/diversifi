@@ -1,3 +1,5 @@
+import type { Hex } from "viem";
+
 export type VaultInfo = {
   id: string;
   title: string;
@@ -23,16 +25,28 @@ export const allVaults: { [key: string]: VaultInfo[] } = {
   Sepolia: [{ id: "sepolia-stables1", title: "Sepolia Stablecoin Vault", src: "/sepolia-stables1.svg" }],
 };
 
-export const vaultIdToContractAddress: { [key: string]: `0x${string}` } = {
+export const vaultIdToContractAddress: { [key: string]: Hex } = {
   Polygon_Stablecoin_Vault: "0x599559Ed394ADd1117ab72667e49d1560A2124E0",
   Base_Stablecoin_Vault: "0x599559Ed394ADd1117ab72667e49d1560A2124E0",
   Sepolia_Stablecoin_Vault: "0xd8d86fe48323Cd4A630cef4f7825fCB22dEF94E9",
 };
 
-export const chainToUsdcAddress: { [key: string]: `0x${string}` } = {
+export const chainToUsdcAddress: { [key: string]: Hex } = {
   Polygon: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
   Base: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
   Sepolia: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238", // eth sepolia
+};
+
+export const chainNameToUsdcAddress: { [key: string]: Hex } = {
+  Polygon: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+  Base: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  Sepolia: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238", // eth sepolia
+};
+
+export const chainNameToPayContractAddress: { [key: string]: Hex } = {
+  Polygon: "0x",
+  Base: "0x",
+  Sepolia: "0x634a3A7cA779BBaF8287E9CbEb252676f0e11Ae1", // eth sepolia
 };
 
 const vaults = [
@@ -77,3 +91,9 @@ const vaults = [
     ],
   },
 ];
+
+export const currencyToCurrencyId: { [key: string]: number } = {
+  USD: 1,
+  TWD: 2,
+  EUR: 3,
+};

@@ -12,21 +12,12 @@ import { PiX, PiList } from "react-icons/pi";
 import { Router } from "next/router";
 
 export type NavLink = { text: string; route: string };
-export const navLinks: NavLink[] = [
-  {
-    text: "Vaults",
-    route: "/",
-  },
-  {
-    text: "Dashboard",
-    route: "/dashboard",
-  },
-];
 
 export default function Navbar() {
   console.log("Navbar.tsx");
   const [menuModal, setMenuModal] = useState(false);
   const pathname = usePathname();
+  console.log("pathname", pathname);
   const router = useRouter();
   const { open, close } = useAppKit();
   const { isConnected, address } = useAccount();
@@ -40,6 +31,17 @@ export default function Navbar() {
     },
   });
 
+  const navLinks: NavLink[] = [
+    {
+      text: "Vaults",
+      route: "/",
+    },
+    {
+      text: "Dashboard",
+      route: `/dashboard?user=${address}`,
+    },
+  ];
+
   return (
     <nav className="w-full flex justify-center">
       <div className="sectionSize h-[64px] flex items-center justify-between">
@@ -49,7 +51,11 @@ export default function Navbar() {
         {/*--- desktop links---*/}
         <div className="hidden sm:flex space-x-4 md:space-x-12">
           {navLinks.map((i) => (
-            <Link key={i.text} href={i.route} className={`${i.route == pathname ? "underlineStatic" : "underlineAni"} text-lg font-semibold text-center cursor-pointer  relative`}>
+            <Link
+              key={i.text}
+              href={i.route}
+              className={`${i.route.split("?")[0] == pathname ? "underlineStatic" : "underlineAni"} text-lg font-semibold text-center cursor-pointer  relative`}
+            >
               {i.text}
             </Link>
           ))}

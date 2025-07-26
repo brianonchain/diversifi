@@ -39,7 +39,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="en">
-      <body className={`${inter.className} h-screen flex flex-col bg-blue1 text-slate-200 overflow-x-hidden overflow-y-auto`}>
+      <body className={`${inter.className} h-screen flex flex-col bg-blue1 text-slate-200 overflow-x-hidden`}>
         <Providers cookies={cookies}>
           <Navbar />
           {children}
