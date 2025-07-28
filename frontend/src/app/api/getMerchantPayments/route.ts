@@ -28,7 +28,7 @@ export const POST = async (req: Request) => {
   if (chain.name === "Sepolia") {
     const query = gql`
       query ($address: Bytes!) {
-        payEvents(where: { to: $address }) {
+        payEvents(where: { to: $address }, orderBy: blockTimestamp, orderDirection: desc) {
           from
           amount
           items

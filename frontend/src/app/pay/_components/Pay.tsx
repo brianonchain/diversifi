@@ -14,7 +14,7 @@ import { Item, CartItem } from "@/utils/types";
 import erc20Abi from "@/utils/abis/erc20Abi.json";
 import payAbi from "@/utils/abis/payAbi.json";
 
-const merchantAddress = "0xf3D49126A9E25724CFE2Ca00bEAa34317543f9aC";
+// const merchantAddress = "0xf3D49126A9E25724CFE2Ca00bEAa34317543f9aC";
 // primary data from databases
 const localToUsdc = "0.033333";
 const cashback = "2";
@@ -32,6 +32,7 @@ export default function Pay() {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [txState, setTxState] = useState<string>("initial"); // initial, waitingForApprove, approving, waitingForDeposit, depositing, final
+  const [merchantAddress, setMerchantAddress] = useState<string>("");
   // hooks
   const config = useConfig();
   const { chain, address } = useAccount();
@@ -108,6 +109,10 @@ export default function Pay() {
     }
     if (Number(usdcBalance) < Number(usdcAmount)) {
       alert("Insufficient balance");
+      return;
+    }
+    if (!merchantAddress) {
+      alert("Please enter merchant's address");
       return;
     }
     // TODO: check for overflows
@@ -271,9 +276,22 @@ export default function Pay() {
                   </p>
                 </div>
                 {/*--- usdc to be sent ---*/}
-                <div className="text-center space-y-1">
-                  <p className="text-xl font-medium">{usdcAmount} USDC will be sent</p>
-                  <p className="text-sm text-center text-slate-500 font-medium">(1 TWD = {localToUsdc} USDC)</p>
+                <div className="">
+                  <div className="flex justify-between font-bold">
+                    <p className="">USDC to be sent</p>
+                    <p className="">USDC {usdcAmount}</p>
+                  </div>
+                  <p className="text-sm text-right text-slate-500 font-medium">1 TWD = {localToUsdc} USDC</p>
+                </div>
+                {/*--- merchant address ---*/}
+                <div className="py-8 space-y-1 border-t border-slate-700">
+                  <label className="font-medium">Enter Merchant's Address</label>
+                  <input
+                    type="text"
+                    className="w-full p-2.5 rounded-lg bg-black bg-opacity-30 border-[1.5px] border-blue3 focus:border-blue4 outline-none"
+                    value={merchantAddress}
+                    onChange={(e) => setMerchantAddress(e.target.value)}
+                  />
                 </div>
               </>
             ) : (
