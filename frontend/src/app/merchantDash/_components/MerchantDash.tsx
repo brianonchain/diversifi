@@ -66,6 +66,8 @@ export default function MerchantDash() {
     staleTime: Infinity,
     gcTime: Infinity,
   });
+  // logs
+  console.log("address", address);
   console.log("payEvents", payEvents);
 
   function getItemNameById(id: string): string | undefined {
@@ -94,7 +96,9 @@ export default function MerchantDash() {
             <div className="px-2 py-4 w-[40px]"></div>
           </div>
           {/*--- table rows ---*/}
-          {isLoadingData ? (
+          {!address ? (
+            <div className="w-full min-h-[200px] flex justify-center items-center text-slate-500">Connect wallet</div>
+          ) : isLoadingData ? (
             <div className="w-full min-h-[200px] flex justify-center items-center">
               <LoadingGray40 />
             </div>
