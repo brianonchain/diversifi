@@ -14,3 +14,10 @@ Sepolia: 0xd8d86fe48323Cd4A630cef4f7825fCB22dEF94E9
 Vault description and details are fetched from an external database using Next.js's unstable_cache in the page.tsx Server Component. This allows immediate loading of the Vault Description and fewer queries to the database.
 
 User-specific data (balances, tx history, etc.) are fetched on the client-side using React Query.
+
+# (Separate Project) Store Payment Metadata in Logs. Test it out:
+
+1. Get Sepolia ETH from Alchemy Faucet and USDC from Circle’s faucet
+2. Go to https://diversifi.vercel.app/pay and connect your “Customer Wallet” that holds these tokens
+3. Add a few items to the Shopping Cart. Then, enter a Merchant Address (an account you control). Finally, click “Send”.
+4. Go to https://diversifi.vercel.app/merchantDash and connect your “Merchant Wallet”; view payment details
