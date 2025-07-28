@@ -8,12 +8,11 @@ import UserVaults from "./_components/UserVaults";
 import dbConnect from "@/db/dbConnect";
 import UserModel from "@/db/UserModel";
 
-export default async function Dashboard({ searchParams }: { searchParams: { user: string | undefined } }) {
-  // Because dashboard is a view-only route, don't need fancy revalidation from mutations, so revalidatePath is sufficient and React Query is not needed
-  // Can just fetch userInfo in page.tsx and pass it down through props
+export default async function Dashboard({ searchParams }: { searchParams: Promise<{ user?: string }> }) {
+  // Because dashboard is a view-only route, don't need fancy revalidation from React Query, can just fetch userInfo in page.tsx and pass it down through props
   console.log("page.tsx");
 
-  const userAddress = searchParams.user;
+  const userAddress = (await searchParams).user;
   if (!userAddress) redirect("/");
 
   // get data from database
