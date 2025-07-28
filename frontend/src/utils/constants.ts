@@ -43,12 +43,6 @@ export const chainNameToUsdcAddress: { [key: string]: Hex } = {
   Sepolia: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238", // eth sepolia
 };
 
-export const chainNameToPayContractAddress: { [key: string]: Hex } = {
-  Polygon: "0x",
-  Base: "0x",
-  Sepolia: "0x634a3A7cA779BBaF8287E9CbEb252676f0e11Ae1", // eth sepolia
-};
-
 const vaults = [
   {
     chain: "Polygon",
@@ -92,8 +86,25 @@ const vaults = [
   },
 ];
 
-export const currencyToCurrencyId: { [key: string]: number } = {
-  USD: 1,
-  TWD: 2,
-  EUR: 3,
+// for /pay and /merchantDash
+import { Item, CurrencyInfo } from "@/utils/types";
+
+export const chainNameToPayContractAddress: { [key: string]: Hex } = {
+  Polygon: "0x",
+  Base: "0x",
+  Sepolia: "0x634a3A7cA779BBaF8287E9CbEb252676f0e11Ae1", // eth sepolia
+};
+
+// list of items for sale
+export const catalog: Item[] = [
+  { name: "Item 1", currencyPrice: 50n, id: 1 },
+  { name: "Item 2", currencyPrice: 100n, id: 2 },
+  { name: "Item 3", currencyPrice: 75n, id: 3 },
+  { name: "Item 4", currencyPrice: 60n, id: 4 },
+];
+
+export const currencyIdToCurrencyInfo: { [key: string]: CurrencyInfo } = {
+  "1": { code: "USD", symbol: "$", decimals: 2, rateDecimals: 0 },
+  "2": { code: "TWD", symbol: "NT", decimals: 0, rateDecimals: 6 },
+  "3": { code: "EUR", symbol: "€", decimals: 2, rateDecimals: 4 },
 };

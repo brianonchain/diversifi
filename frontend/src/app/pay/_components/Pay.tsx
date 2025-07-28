@@ -1,33 +1,28 @@
 "use client";
 import { useState, useEffect, Fragment } from "react";
 // viem
-import { encodePacked, padHex, toHex, parseUnits, formatUnits } from "viem";
-import type { Hex } from "viem";
+import { encodePacked, padHex, parseUnits, formatUnits } from "viem";
 // wagmi
 import { writeContract, waitForTransactionReceipt } from "wagmi/actions";
 import { useConfig, useAccount, useReadContract, useSwitchChain } from "wagmi";
 // images
 import { FaPlus, FaMinus } from "react-icons/fa6";
 // utils
-import { Item, CartItem } from "@/utils/types";
 import { idToSku } from "@/utils/functions";
-import { currencyToCurrencyId } from "@/utils/constants";
+import { chainNameToUsdcAddress, chainNameToPayContractAddress, catalog, currencyIdToCurrencyInfo } from "@/utils/constants";
+import { Item, CartItem } from "@/utils/types";
 import erc20Abi from "@/utils/abis/erc20Abi.json";
 import payAbi from "@/utils/abis/payAbi.json";
-import { chainNameToUsdcAddress, chainNameToPayContractAddress } from "@/utils/constants";
 
-const items: Item[] = [
-  { name: "Item 1", currencyPrice: 50n, id: 1 },
-  { name: "Item 2", currencyPrice: 100n, id: 2 },
-  { name: "Item 3", currencyPrice: 75n, id: 3 },
-  { name: "Item 4", currencyPrice: 60n, id: 4 },
-];
 const merchantAddress = "0xf3D49126A9E25724CFE2Ca00bEAa34317543f9aC";
+// primary data from databases
 const localToUsdc = "0.033333";
-const rateDecimals = 6;
-const currency = "TWD";
-const currencyDecimals = 0; // TWD=0, USD=2, EUR=2
 const cashback = "2";
+const currencyId = "2";
+// secondary data
+const currencySymbol = currencyIdToCurrencyInfo[currencyId].symbol;
+const currencyDecimals = currencyIdToCurrencyInfo[currencyId].decimals; // TWD=0, USD=2, EUR=2
+const rateDecimals = currencyIdToCurrencyInfo[currencyId].rateDecimals; // TWD=6, USD=0, EUR=4
 
 export default function Pay() {
   console.log("Pay.tsx");
@@ -42,7 +37,7 @@ export default function Pay() {
   const { chain, address } = useAccount();
   const { switchChain } = useSwitchChain();
   const { data: usdcBalance } = useReadContract({
-    address: chainNameToUsdcAddress[chain!.name],
+    address: chain?.name ? chainNameToUsdcAddress[chain.name] : undefined,
     abi: erc20Abi,
     functionName: "balanceOf",
     args: [address!],
@@ -55,8 +50,8 @@ export default function Pay() {
     },
   });
   // logs
-  console.log("cartItems", cartItems);
-  console.log("chain", chain);
+  console.log("cartItems:", cartItems);
+  console.log("chain.name:", chain?.name);
 
   // change to sepolia on mount
   useEffect(() => {
@@ -70,8 +65,9 @@ export default function Pay() {
     let usdcSentTotal = 0;
     let currencyTotalInteger = 0;
     for (const cartItem of cartItems) {
+      // calculate total currency price
       currencyTotalInteger += Math.round(Number(cartItem.item.currencyPrice) * 10 ** currencyDecimals) * cartItem.quantity;
-      // usdc
+      // calculate total usdc to be sent
       const usdcSentPerItem = (Number(cartItem.item.currencyPrice) * Number(localToUsdc) * (1 - Number(cashback) / 100)).toFixed(2); // CANONICAL FORMULA. localToUsdc = usdcSendPerItem/(currencyPrice * (1 - cashback/100))
       usdcSentTotal = Number((usdcSentTotal + Number(usdcSentPerItem) * cartItem.quantity).toFixed(2));
       console.log(usdcSentPerItem, usdcSentTotal);
@@ -121,18 +117,16 @@ export default function Pay() {
     const itemsBytes32Array: string[] = [];
     let usdcSentTotal = 0;
     for (const cartItem of cartItems) {
-      // calculate usdc to to send
+      // 1. calculate usdc to to send
       const usdcSentPerItem = (Number(cartItem.item.currencyPrice) * Number(localToUsdc) * (1 - Number(cashback) / 100)).toFixed(2); // CANONICAL FORMULA. localToUsdc = usdcSendPerItem/(currencyPrice * (1 - cashback/100))
       usdcSentTotal = Number((usdcSentTotal + Number(usdcSentPerItem) * cartItem.quantity).toFixed(2));
-      console.log("usdcSentPerItem", usdcSentPerItem);
-      console.log("usdcSentTotal", usdcSentTotal);
 
-      // define itemsBytes32Array
+      // 2. define itemsBytes32Array
       const cartItemEncoded = encodePacked(
         ["uint8", "uint8", "uint8", "uint16", "uint32", "uint64", "uint64"],
         [
           1, // 1 byte, version
-          currencyToCurrencyId[currency], // 1 byte,currencyId
+          Number(currencyId), // 1 byte,currencyId
           Number(cashback) * 10 * 1, // 1 byte, cashback (decimals=1), max=25.5%
           cartItem.quantity, // 2 bytes, quantity
           cartItem.item.id, // 4 bytes, id
@@ -146,7 +140,7 @@ export default function Pay() {
     console.log("usdcSentTotal", usdcSentTotal);
     console.log("itemsBytes32Array", itemsBytes32Array);
 
-    // approve usdc and call "pay" on our contract
+    // make 2 blockchain transactions
     try {
       // approve
       const approveHash = await writeContract(config, {
@@ -169,8 +163,6 @@ export default function Pay() {
       });
       setTxState("sending");
       const txReceipt = await waitForTransactionReceipt(config, { hash: payHash, timeout: 60000 });
-      console.log("payHash", payHash);
-      console.log("txReceipt", txReceipt);
       setTxState("final");
     } catch (e) {
       console.log(e);
@@ -191,11 +183,13 @@ export default function Pay() {
         <div className="w-full space-y-4">
           <div className="text-xl font-bold">Items For Sale</div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4">
-            {items.map((item) => (
+            {catalog.map((item) => (
               <div key={item.id} className="space-y-2">
                 <div className="px-3 w-full h-[100px] text-white bg-blue1 rounded-xl border-2 border-blue2 flex flex-col justify-center items-start">
                   <div className="font-medium">{item.name}</div>
-                  <div className="text-sm font-semibold text-slate-400">NT {item.currencyPrice.toString()}</div>
+                  <div className="text-sm font-semibold text-slate-400">
+                    {currencySymbol} {item.currencyPrice.toString()}
+                  </div>
                   <div className="text-xs text-slate-500 italic">SKU: {idToSku(item.id)}</div>
                 </div>
                 <button className="w-full buttonPrimary" type="button" onClick={() => addItem(item)}>
@@ -225,7 +219,9 @@ export default function Pay() {
                       <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3">
                         <div>{cartItem.item.name}</div>
                         <div className="text-xs text-slate-500">
-                          <div>NT {cartItem.item.currencyPrice.toString()}</div>
+                          <div>
+                            {currencySymbol} {cartItem.item.currencyPrice.toString()}
+                          </div>
                           <div className="whitespace-nowrap">{idToSku(cartItem.item.id)}</div>
                         </div>
                       </div>
@@ -254,7 +250,9 @@ export default function Pay() {
                         </button>
                       </div>
                       {/*--- col4, subtotal ---*/}
-                      <div className="text-right">NT {Number(cartItem.item.currencyPrice * BigInt(cartItem.quantity)).toFixed(currencyDecimals)}</div>
+                      <div className="text-right">
+                        {currencySymbol} {Number(cartItem.item.currencyPrice * BigInt(cartItem.quantity)).toFixed(currencyDecimals)}
+                      </div>
                     </Fragment>
                   ))}
                 </div>
@@ -262,11 +260,15 @@ export default function Pay() {
                 <div className="pt-8 grid grid-cols-[1fr_auto] border-t border-slate-700">
                   <p>Total Price</p>
                   <div className="relative flex items-center justify-center">
-                    <p>NT {currencyAmount}</p>
+                    <p>
+                      {currencySymbol} {currencyAmount}
+                    </p>
                     <div className="absolute w-[120%] h-[1.5px] bg-white"></div>
                   </div>
                   <p>After 2% Instant Cashback</p>
-                  <p>NT {(Number(currencyAmount) * ((100 - Number(cashback)) / 100)).toFixed(currencyDecimals)}</p>
+                  <p>
+                    {currencySymbol} {(Number(currencyAmount) * ((100 - Number(cashback)) / 100)).toFixed(currencyDecimals)}
+                  </p>
                 </div>
                 {/*--- usdc to be sent ---*/}
                 <div className="text-center space-y-1">

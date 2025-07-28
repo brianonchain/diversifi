@@ -223,4 +223,44 @@
     background: #04aa6d; /* Green background */
     cursor: pointer; /* Cursor on hover */
   }
+
+  .fullModal {
+    @apply modalFullBase modalFullColor modalFullSize pb-[32px];
+  }
+
+  .modalFullBase {
+    @apply flex flex-col items-center fixed left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%] z-[11] lg:rounded-[16px];
+  }
+
+  .modalFullColor {
+    @apply bg-blue1 lg:border lg:border-blue3;
+  }
+
+  .modalFullSize {
+    @apply w-full lg:w-[800px] h-screen lg:h-auto lg:max-h-[90%];
+  }
+
+  .fullModalContentContainer {
+    @apply w-full h-full flex justify-center overflow-y-auto;
+  }
+
+  .fullModalContentContainer2 {
+    @apply w-full px-[16px] lg:px-[32px] flex flex-col; /* must define max-w in each individual modal */
+  }
+
+  .xButtonContainer {
+    @apply absolute right-0 top-0 lg:w-[52px] lg:h-[52px] hidden lg:flex items-center justify-center rounded-bl-[14px] rounded-tr-[14px] cursor-pointer lg:hover:bg-slate-600 active:bg-slate-600;
+  }
+
+  .xButton {
+    @apply text-[32px] font-medium lg:text-[24px] text-white;
+  }
+
+  .modalHeaderFont {
+    @apply text-2xl lg:text-xl text-center font-semibold;
+  }
+
+  .modalHeader {
+    @apply modalHeaderFont w-[290px] lg:w-[280px] py-[24px] lg:py-[20px];
+  }
 }
